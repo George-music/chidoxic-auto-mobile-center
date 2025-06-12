@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Matin's Blog</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>MatinBlogin - Car Dealership Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <style>
-    /* Base and reset */
     html,body{margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif;background:#f8f6f5;}
     .appbar{background:#1976d2;color:#fff;padding:0 16px;height:58px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 6px rgba(0,0,0,0.06);}
     .appbar-title{font-size:1.5rem;font-weight:600;}
@@ -63,11 +62,12 @@
 </head>
 <body>
   <div class="appbar">
-    <span class="appbar-title">Matin's Blog</span>
+    <span class="appbar-title">MatinBlogin</span>
     <span>
       <a href="rss.xml" class="rss-link" target="_blank">RSS</a>
     </span>
     <span class="appbar-btns">
+      <button id="features-btn">Features</button>
       <button id="admin-btn" style="display:none;">Admin Dashboard</button>
       <button id="login-btn">Admin Login</button>
       <button id="logout-btn" style="display:none;">Logout</button>
@@ -94,8 +94,8 @@
     // ---- STATE ----
     let isAdmin = false;
     let posts = [];
-    let postViews = {}; // {postId: count}
-    let comments = {}; // {postId: [comments]}
+    let postViews = {};
+    let comments = {};
     let categories = [];
     let tags = [];
     let archives = [];
@@ -113,7 +113,6 @@
 
     // ---- RENDERING ----
     function render() {
-      // Pagination/filtering logic
       let filtered = posts
         .filter(p => !filter.tag || (p.tags||[]).includes(filter.tag))
         .filter(p => !filter.cat || p.category===filter.cat)
@@ -332,7 +331,6 @@
       try {
         let res = await appwriteRequest('databases.'+DB_ID+'.collections.'+POSTS_COLLECTION_ID+'.documents.list','GET');
         posts = res.documents.sort((a,b)=>new Date(b.$createdAt)-new Date(a.$createdAt));
-        // Collect tags, cats, archives
         tags = [...new Set(posts.flatMap(p=>p.tags||[]))];
         categories = [...new Set(posts.map(p=>p.category).filter(Boolean))];
         archives = [...new Set(posts.map(p=>formatArchiveDate(p.$createdAt)))];
@@ -395,7 +393,6 @@
       } catch { postViews={}; }
     }
     async function incrementView(postId) {
-      // Should be atomic; for demo, we just add 1
       try {
         let v = await appwriteRequest(`databases.${DB_ID}.collections.${VIEWS_COLLECTION_ID}.documents.list?queries[]="postId=${postId}"`,'GET');
         let doc = v.documents[0];
@@ -490,27 +487,69 @@
       document.getElementById('newsletter-email').value='';
     };
 
-    // ---- ABOUT/CONTACT ----
+    // ---- ABOUT/CONTACT/FEATURES ----
     document.getElementById('about-btn').onclick = function() {
-      showDialog(`<div class="about-box"><h2>About Matin</h2>
-      <img src="https://ui-avatars.com/api/?name=Matin&background=1976d2&color=fff" style="border-radius:50%"/>
-      <div style="margin:12px 0;">Hi, I'm Matin. Welcome to my classic blog! Here I share thoughts on tech, code, and more.</div>
-      <div>Contact: <a href="#" onclick="document.getElementById('contact-btn').click();return false;">Contact form</a></div>
-      </div>
-      <div class="dialog-actions"><button class="btn" onclick="window.closeDialog()">Close</button></div>`);
+      showDialog(`<div class="about-box" style="max-width:560px;margin:auto;">
+        <h2>About Us</h2>
+        <p>
+          Welcome to <strong>MatinBlogin</strong>, your premier destination for high-quality vehicles.
+          We specialize in providing a seamless car-buying experience, offering a wide range of cars, from luxury models to budget-friendly options. With a strong commitment to customer satisfaction and transparency, we ensure that every vehicle listed meets the highest standards.
+        </p>
+        <p>
+          At MatinBlogin, our mission is simple—connecting car enthusiasts with the best vehicles in the market. As an experienced dealer, Matin personally curates and showcases a diverse collection of cars through engaging posts, high-quality images, and detailed video reviews.
+        </p>
+        <h3>Our Services</h3>
+        <ul style="text-align:left;">
+          <li><strong>Car Sales</strong> – Browse an extensive selection of high-quality vehicles, available at competitive prices.</li>
+          <li><strong>Vehicle Listings</strong> – Detailed images, specifications, and video walkthroughs for every car.</li>
+          <li><strong>Expert Consultation</strong> – Personalized recommendations to help you find your dream car.</li>
+          <li><strong>Trade-ins & Financing</strong> – Flexible trade-in options and financing assistance to meet your needs.</li>
+          <li><strong>Car Reviews & Insights</strong> – Stay informed with expert reviews, comparisons, and industry insights.</li>
+          <li><strong>Admin Dashboard</strong> – Our user-friendly admin panel enables Matin to post pictures, videos, and detailed information about available vehicles.</li>
+        </ul>
+        <div class="dialog-actions"><button class="btn" onclick="window.closeDialog()">Close</button></div>
+      </div>`);
     };
+
     document.getElementById('contact-btn').onclick = function() {
-      showDialog(`<div class="about-box"><h2>Contact Me</h2>
-      <form onsubmit="window.sendContact();return false;">
-        <input placeholder="Your name" id="contact-name" required/>
-        <input type="email" placeholder="Your email" id="contact-email" required/>
-        <textarea placeholder="Message" id="contact-msg" required></textarea>
-        <div class="dialog-actions">
-          <button class="btn" type="submit">Send</button>
-          <button class="btn" onclick="window.closeDialog();return false;">Close</button>
+      showDialog(`<div class="about-box">
+        <h2>Contact Us</h2>
+        <div style="margin-bottom:10px;">
+          Have questions or looking for a specific car? We’re here to help!
         </div>
-      </form></div>`);
+        <div style="text-align:left;margin-bottom:8px;">
+          📍 <b>Location:</b> [Your Business Address]<br/>
+          📧 <b>Email:</b> [Your Email Address]<br/>
+          📞 <b>Phone:</b> [Your Contact Number]<br/>
+          🌍 <b>Website:</b> <a href="https://www.matinblogin.com" target="_blank">www.matinblogin.com</a>
+        </div>
+        <div style="margin-bottom:10px;">Stay connected! Follow us on social media for the latest updates and exclusive deals.</div>
+        <div class="dialog-actions"><button class="btn" onclick="window.closeDialog()">Close</button></div>
+      </div>`);
     };
+
+    document.getElementById('features-btn').onclick = function() {
+      showDialog(`<div class="about-box" style="max-width:500px;">
+        <h2>Platform Features</h2>
+        <div style="text-align:left;">
+          <ol style="padding-left:22px;">
+            <li><b>Advanced Search & Filters</b> – Find cars by make, model, price, mileage, and year.</li>
+            <li><b>User Reviews & Ratings</b> – Customers can share feedback on their purchases and experiences.</li>
+            <li><b>Live Chat & Inquiry Forms</b> – Instant support for users looking for specific cars or deals.</li>
+            <li><b>360° Car Views & Virtual Tours</b> – Interactive car previews for higher engagement.</li>
+            <li><b>Wishlist & Compare Feature</b> – Save favorite cars and compare multiple options side-by-side.</li>
+            <li><b>Integrated Payment Options</b> – Secure online deposits and payments.</li>
+            <li><b>AI-Powered Car Recommendations</b> – Personalized suggestions based on browsing history.</li>
+            <li><b>Social Media Integration</b> – Share listings easily on all major platforms.</li>
+            <li><b>Mobile App Compatibility</b> – Mobile-friendly design and/or dedicated app.</li>
+            <li><b>Push Notifications & Alerts</b> – Updates about new arrivals, price drops, or special offers.</li>
+            <li><b>Admin Analytics Dashboard</b> – Insights into user behavior, popular models, and sales trends.</li>
+          </ol>
+        </div>
+        <div class="dialog-actions"><button class="btn" onclick="window.closeDialog()">Close</button></div>
+      </div>`);
+    };
+
     window.sendContact = function() {
       showSnack('Message sent (demo only)!','#1976d2');
       window.closeDialog();
@@ -543,7 +582,6 @@
       return await res.json();
     }
 
-    // ---- UTILS ----
     function escapeHtml(str) {
       return String(str).replace(/[&<>"']/g,function(s){
         return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]);
@@ -554,7 +592,6 @@
       return dt.toLocaleString('default',{month:'short',year:'numeric'});
     }
 
-    // ---- INITIALIZE ----
     async function checkAdmin() {
       try {
         await appwriteRequest('account.get','GET');
