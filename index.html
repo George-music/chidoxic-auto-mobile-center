@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Matin's Blog</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <style>
+    /* Base and reset */
+    html,body{margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif;background:#f8f6f5;}
+    .appbar{background:#1976d2;color:#fff;padding:0 16px;height:58px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 6px rgba(0,0,0,0.06);}
+    .appbar-title{font-size:1.5rem;font-weight:600;}
+    .appbar-btns button{margin-left:10px;background:none;border:none;color:#fff;font-size:1rem;padding:8px 14px;border-radius:5px;cursor:pointer;transition:.2s;}
+    .appbar-btns button:hover{background:#1565c0;}
+    .mainwrap{display:flex;flex-wrap:wrap;max-width:1200px;margin:30px auto;}
+    .container{flex:1 1 430px;min-width:320px;max-width:700px;background:#fff;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.06);padding:2rem;margin-right:25px;}
+    .sidebar{width:270px;min-width:200px;max-width:280px;margin-top:14px;}
+    .side-block{background:#fff;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.06);padding:1.2rem 1.1rem;margin-bottom:20px;}
+    .card{background:#f5f5f7;border-radius:8px;margin-bottom:22px;padding:22px;box-shadow:0 2px 4px 0 rgba(0,0,0,0.03);}
+    .card-title{font-size:1.3rem;font-weight:500;}
+    .card-date{color:#888;font-size:0.93rem;margin-bottom:8px;}
+    .card-content{color:#222;margin-bottom:10px;}
+    .card-tags{color:#1565c0;font-size:0.94rem;margin-bottom:10px;}
+    .card-actions button{margin-right:7px;}
+    .btn{background:#1976d2;color:#fff;border:none;padding:7px 18px;border-radius:5px;cursor:pointer;font-size:1rem;}
+    .btn:hover{background:#115293;}
+    .btn-danger{background:#e53935;}
+    .btn-danger:hover{background:#b71c1c;}
+    .btn-sm{padding:5px 12px;font-size:0.95rem;}
+    .pagination{display:flex;gap:8px;justify-content:center;margin-top:22px;}
+    .pagination button{background:#eee;border:none;padding:7px 12px;border-radius:4px;font-size:1rem;cursor:pointer;}
+    .pagination .active{background:#1976d2;color:#fff;}
+    .comment-list{margin-top:24px;}
+    .comment{margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid #eee;}
+    .comment .author{font-weight:600;}
+    .comment .date{font-size:0.92rem;color:#888;}
+    .comment-form input,.comment-form textarea{width:100%;margin:6px 0 14px 0;padding:10px;font-size:1rem;border-radius:6px;border:1px solid #bdbdbd;background:#f8fafb;}
+    .comment-form textarea{min-height:60px;}
+    .about-box{padding:20px 0;text-align:center;}
+    .author-profile{background:#e3f2fd;padding:18px 12px;margin-top:18px;border-radius:8px;text-align:center;}
+    .author-avatar{width:60px;height:60px;border-radius:50%;margin-bottom:6px;}
+    .newsletter input[type=email]{width:60%;padding:7px 6px;margin:8px 0 12px 0;}
+    .newsletter button{padding:7px 18px;}
+    .archive-list,.blogroll-list,.tag-list,.cat-list,.recent-list{list-style:none;padding-left:0;}
+    .archive-list li,.blogroll-list li,.tag-list li,.cat-list li,.recent-list li{margin-bottom:5px;}
+    .tag-link,.cat-link{color:#1976d2;text-decoration:underline;cursor:pointer;}
+    .tag-link:hover,.cat-link:hover{color:#1565c0;}
+    .searchbar input[type=text]{width:75%;padding:6px 7px;border-radius:4px;border:1px solid #aaa;}
+    .searchbar button{margin-left:6px;}
+    .view-counter{color:#777;font-size:0.9rem;margin-bottom:10px;}
+    .rss-link{color:#fff;text-decoration:underline;font-size:0.96rem;}
+    .side-block h4{margin:0 0 7px 0;}
+    .dialog-backdrop{position:fixed;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.14);z-index:20;}
+    .dialog{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff;border-radius:10px;min-width:320px;max-width:95vw;padding:36px 26px 20px 26px;z-index:25;box-shadow:0 8px 36px rgba(0,0,0,0.13);}
+    .dialog-title{font-size:1.1rem;font-weight:600;margin-bottom:10px;}
+    .dialog-actions{margin-top:20px;text-align:right;}
+    .dialog input,.dialog textarea{width:100%;margin:6px 0 14px 0;padding:10px;font-size:1rem;border-radius:6px;border:1px solid #bdbdbd;background:#f8fafb;}
+    .dialog textarea{min-height:100px;}
+    .loading{display:flex;gap:12px;align-items:center;font-size:1.1rem;color:#1976d2;margin:30px 0 0 0;}
+    .snack{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#222;color:#fff;border-radius:5px;padding:14px 30px;font-size:1rem;z-index:50;opacity:.98;box-shadow:0 4px 14px rgba(0,0,0,0.11);}
+    @media(max-width:960px){.mainwrap{flex-direction:column;}.sidebar{margin:0 auto;width:95%;}}
+    @media(max-width:600px){.container{padding:1rem;}.dialog{min-width:90vw;padding:22px 10px 12px 10px;}.sidebar{width:100%;}}
+  </style>
+</head>
+<body>
+  <div class="appbar">
+    <span class="appbar-title">Matin's Blog</span>
+    <span>
+      <a href="rss.xml" class="rss-link" target="_blank">RSS</a>
+    </span>
+    <span class="appbar-btns">
+      <button id="admin-btn" style="display:none;">Admin Dashboard</button>
+      <button id="login-btn">Admin Login</button>
+      <button id="logout-btn" style="display:none;">Logout</button>
+      <button id="about-btn">About</button>
+      <button id="contact-btn">Contact</button>
+    </span>
+  </div>
+  <div class="mainwrap">
+    <div class="container" id="main"></div>
+    <div class="sidebar" id="sidebar"></div>
+  </div>
+  <!-- Dialogs, snackbars rendered by JS -->
+
+  <script>
+    // ---- CONFIG ----
+    const APPWRITE_ENDPOINT = 'https://cloud.appwrite.io/v1'; // change if self hosted
+    const APPWRITE_PROJECT = 'YOUR_PROJECT_ID'; // REQUIRED
+    const DB_ID = 'YOUR_DATABASE_ID'; // REQUIRED
+    const POSTS_COLLECTION_ID = 'YOUR_COLLECTION_ID'; // REQUIRED
+    const COMMENTS_COLLECTION_ID = 'YOUR_COMMENTS_COLLECTION_ID'; // REQUIRED
+    const VIEWS_COLLECTION_ID = 'YOUR_VIEWS_COLLECTION_ID'; // REQUIRED
+    const CATEGORIES_COLLECTION_ID = 'YOUR_CATEGORIES_COLLECTION_ID'; // REQUIRED
+
+    // ---- STATE ----
+    let isAdmin = false;
+    let posts = [];
+    let postViews = {}; // {postId: count}
+    let comments = {}; // {postId: [comments]}
+    let categories = [];
+    let tags = [];
+    let archives = [];
+    let blogroll = [
+      {name:"MDN Web Docs",url:"https://developer.mozilla.org/"},
+      {name:"CSS-Tricks",url:"https://css-tricks.com/"},
+      {name:"Dev.to",url:"https://dev.to/"},
+    ];
+    let selectedPost = null;
+    let filter = {tag: null, cat: null, search: null, archive: null};
+    let main = document.getElementById('main');
+    let sidebar = document.getElementById('sidebar');
+    let loading = false;
+    let page = 1, perPage = 5, totalPages = 1;
+
+    // ---- RENDERING ----
+    function render() {
+      // Pagination/filtering logic
+      let filtered = posts
+        .filter(p => !filter.tag || (p.tags||[]).includes(filter.tag))
+        .filter(p => !filter.cat || p.category===filter.cat)
+        .filter(p => !filter.search || (
+          p.title.toLowerCase().includes(filter.search.toLowerCase()) ||
+          p.content.toLowerCase().includes(filter.search.toLowerCase())
+        ))
+        .filter(p => !filter.archive || formatArchiveDate(p.$createdAt)===filter.archive);
+      totalPages = Math.ceil(filtered.length/perPage);
+      if (page<1) page=1;
+      if (page>totalPages) page=totalPages;
+      let start = (page-1)*perPage;
+      let paged = filtered.slice(start, start+perPage);
+
+      main.innerHTML = '';
+      if (loading) {
+        main.innerHTML = `<div class="loading"><span>Loading...</span></div>`;
+        return;
+      }
+      if (!selectedPost) {
+        if (filtered.length === 0) {
+          main.innerHTML = '<div style="text-align:center;padding:40px 0;">No posts found.</div>';
+          return;
+        }
+        paged.forEach(post => {
+          main.appendChild(card(post));
+        });
+        main.appendChild(renderPagination(totalPages,page));
+      } else {
+        main.appendChild(postDetail(selectedPost));
+      }
+      renderSidebar();
+    }
+    function card(post) {
+      let c = document.createElement('div');
+      c.className = 'card';
+      c.innerHTML = `
+        <div class="card-title">${escapeHtml(post.title)}</div>
+        <div class="card-date">${new Date(post.$createdAt).toLocaleString()} ${post.category?`<span style="margin-left:10px;" class="cat-link" onclick="window.filterCat('${post.category}')">${escapeHtml(post.category)}</span>`:''}</div>
+        <div class="card-tags">${(post.tags||[]).map(t=>`<span class="tag-link" onclick="window.filterTag('${t}')">${escapeHtml(t)}</span>`).join(' ')}</div>
+        <div class="view-counter">Views: ${postViews[post.$id]||0}</div>
+        <div class="card-content">${escapeHtml(post.content.length > 200 ? post.content.slice(0,200)+'...' : post.content)}</div>
+        <div class="card-actions">
+          <button class="btn btn-sm" onclick="window.selectPost('${post.$id}')">Read More</button>
+          ${isAdmin ? `<button class="btn btn-danger btn-sm" onclick="window.deletePost('${post.$id}')">Delete</button>` : ''}
+        </div>
+      `;
+      return c;
+    }
+    function postDetail(post) {
+      let c = document.createElement('div');
+      c.className = 'card';
+      c.innerHTML = `
+        <div class="card-title" style="font-size:1.4rem;">${escapeHtml(post.title)}</div>
+        <div class="card-date">${new Date(post.$createdAt).toLocaleString()} ${post.category?`<span style="margin-left:10px;" class="cat-link" onclick="window.filterCat('${post.category}')">${escapeHtml(post.category)}</span>`:''}</div>
+        <div class="card-tags">${(post.tags||[]).map(t=>`<span class="tag-link" onclick="window.filterTag('${t}')">${escapeHtml(t)}</span>`).join(' ')}</div>
+        <div class="view-counter">Views: ${postViews[post.$id]||0}</div>
+        <div class="card-content" style="white-space:pre-line; margin-bottom:18px;">${escapeHtml(post.content)}</div>
+        <div class="author-profile">
+          <img src="https://ui-avatars.com/api/?name=Matin&background=1976d2&color=fff" class="author-avatar" alt="Matin"/>
+          <div><b>Matin</b> — web developer, blogger. Loves tech & open source.</div>
+        </div>
+        <div class="card-actions" style="margin-top:18px;">
+          <button class="btn" onclick="window.backToFeed()">Back</button>
+          ${isAdmin ? `<button class="btn btn-danger" onclick="window.deletePost('${post.$id}')">Delete</button>` : ''}
+        </div>
+        <div class="comment-list" id="comments-${post.$id}"></div>
+        ${commentForm(post.$id)}
+      `;
+      setTimeout(()=>renderComments(post.$id),0);
+      return c;
+    }
+    function renderPagination(total,p) {
+      if (total<2) return document.createElement('div');
+      let pag = document.createElement('div');
+      pag.className = 'pagination';
+      for (let i=1;i<=total;i++) {
+        let btn = document.createElement('button');
+        btn.textContent = i;
+        if (i===p) btn.className = 'active';
+        btn.onclick = ()=>{page=i;render();};
+        pag.appendChild(btn);
+      }
+      return pag;
+    }
+    function renderSidebar() {
+      sidebar.innerHTML = `
+        <form class="searchbar" onsubmit="window.doSearch();return false;" style="margin-bottom:12px;">
+          <input type="text" id="search-input" placeholder="Search posts..." value="${filter.search||''}"/>
+          <button class="btn btn-sm" type="submit">Search</button>
+        </form>
+        <div class="side-block">
+          <h4>Recent Posts</h4>
+          <ul class="recent-list">${posts.slice(0,5).map(p=>`<li><a href="#" onclick="window.selectPost('${p.$id}');return false;">${escapeHtml(p.title)}</a></li>`).join('')}</ul>
+        </div>
+        <div class="side-block">
+          <h4>Popular Posts</h4>
+          <ul class="recent-list">${posts.sort((a,b)=>(postViews[b.$id]||0)-(postViews[a.$id]||0)).slice(0,5).map(p=>`<li><a href="#" onclick="window.selectPost('${p.$id}');return false;">${escapeHtml(p.title)}</a> (${postViews[p.$id]||0})</li>`).join('')}</ul>
+        </div>
+        <div class="side-block">
+          <h4>Categories</h4>
+          <ul class="cat-list">${categories.map(c=>`<li><span class="cat-link" onclick="window.filterCat('${c}')">${escapeHtml(c)}</span></li>`).join('')}</ul>
+        </div>
+        <div class="side-block">
+          <h4>Tags</h4>
+          <ul class="tag-list">${tags.map(t=>`<li><span class="tag-link" onclick="window.filterTag('${t}')">${escapeHtml(t)}</span></li>`).join('')}</ul>
+        </div>
+        <div class="side-block">
+          <h4>Archives</h4>
+          <ul class="archive-list">${archives.map(a=>`<li><a href="#" onclick="window.filterArchive('${a}');return false;">${a}</a></li>`).join('')}</ul>
+        </div>
+        <div class="side-block">
+          <h4>Blogroll</h4>
+          <ul class="blogroll-list">${blogroll.map(b=>`<li><a href="${b.url}" target="_blank">${escapeHtml(b.name)}</a></li>`).join('')}</ul>
+        </div>
+        <div class="side-block newsletter" style="text-align:center;">
+          <h4>Newsletter</h4>
+          <form onsubmit="window.signupNewsletter();return false;">
+            <input type="email" id="newsletter-email" placeholder="Your email..." required/>
+            <br>
+            <button class="btn btn-sm" type="submit">Subscribe</button>
+          </form>
+        </div>
+      `;
+    }
+    function commentForm(postId) {
+      return `
+        <form class="comment-form" id="cf-${postId}" onsubmit="window.submitComment('${postId}');return false;">
+          <input type="text" id="cf-name-${postId}" placeholder="Name" required/>
+          <input type="email" id="cf-email-${postId}" placeholder="Email" required/>
+          <textarea id="cf-text-${postId}" placeholder="Write a comment..." required></textarea>
+          <div class="dialog-actions">
+            <button class="btn btn-sm" type="submit">Post Comment</button>
+          </div>
+        </form>
+      `;
+    }
+    function renderComments(postId) {
+      let cl = document.getElementById('comments-'+postId);
+      let cmt = comments[postId]||[];
+      if (!cl) return;
+      if (cmt.length===0) {
+        cl.innerHTML = '<div style="color:#888;">No comments yet.</div>';
+        return;
+      }
+      cl.innerHTML = cmt.map(cm=>`
+        <div class="comment">
+          <div class="author">${escapeHtml(cm.name)} ${isAdmin?`<span style="color:#888;cursor:pointer;" onclick="window.deleteComment('${cm.$id}','${postId}')">[delete]</span>`:''}</div>
+          <div class="date">${new Date(cm.$createdAt).toLocaleString()}</div>
+          <div class="body" style="white-space:pre-line;">${escapeHtml(cm.text)}</div>
+        </div>
+      `).join('');
+    }
+
+    // ---- DIALOGS ----
+    function showDialog(html, onClose = ()=>{}) {
+      removeDialog();
+      let backdrop = document.createElement('div');
+      backdrop.className = 'dialog-backdrop';
+      backdrop.onclick = removeDialog;
+      let dialog = document.createElement('div');
+      dialog.className = 'dialog';
+      dialog.innerHTML = html;
+      backdrop.appendChild(dialog);
+      document.body.appendChild(backdrop);
+      setTimeout(()=>dialog.querySelector('input,textarea')?.focus(), 100);
+      dialog.addEventListener('keydown', e=>{
+        if(e.key==='Escape'){ removeDialog(); onClose(); }
+      });
+      window.lastDialogClose = onClose;
+    }
+    function removeDialog() {
+      let d = document.querySelector('.dialog-backdrop');
+      if (d) d.remove();
+      if (window.lastDialogClose) window.lastDialogClose();
+    }
+    function showSnack(msg, color='#222') {
+      let s = document.createElement('div');
+      s.className = 'snack';
+      s.style.background = color;
+      s.textContent = msg;
+      document.body.appendChild(s);
+      setTimeout(()=>s.remove(), 2300);
+    }
+
+    // ---- NAVIGATION ----
+    window.selectPost = async function(id) {
+      selectedPost = posts.find(p=>p.$id===id);
+      if (selectedPost) {
+        await incrementView(id);
+        await fetchViews();
+        await fetchComments(id);
+      }
+      render();
+    };
+    window.backToFeed = function() {
+      selectedPost = null;
+      render();
+    };
+    window.filterTag = function(tag) {
+      filter.tag = tag;page=1;render();
+    };
+    window.filterCat = function(cat) {
+      filter.cat = cat;page=1;render();
+    };
+    window.filterArchive = function(a) {
+      filter.archive = a;page=1;render();
+    };
+    window.doSearch = function() {
+      filter.search = document.getElementById('search-input').value.trim();page=1;render();
+    };
+
+    // ---- CRUD + AUTH ----
+    async function fetchPosts() {
+      loading = true; render();
+      try {
+        let res = await appwriteRequest('databases.'+DB_ID+'.collections.'+POSTS_COLLECTION_ID+'.documents.list','GET');
+        posts = res.documents.sort((a,b)=>new Date(b.$createdAt)-new Date(a.$createdAt));
+        // Collect tags, cats, archives
+        tags = [...new Set(posts.flatMap(p=>p.tags||[]))];
+        categories = [...new Set(posts.map(p=>p.category).filter(Boolean))];
+        archives = [...new Set(posts.map(p=>formatArchiveDate(p.$createdAt)))];
+      } catch (e) {
+        showSnack('Failed to load posts','#b71c1c');
+        posts = [];
+      }
+      loading = false; render();
+    }
+    window.deletePost = async function(id) {
+      if(!confirm('Delete this post?')) return;
+      loading = true; render();
+      try {
+        await appwriteRequest(`databases.${DB_ID}.collections.${POSTS_COLLECTION_ID}.documents.${id}`,'DELETE');
+        showSnack('Post deleted!','#e53935');
+        await fetchPosts();
+        if(selectedPost && selectedPost.$id===id) selectedPost = null;
+      } catch {
+        showSnack('Delete failed','#b71c1c');
+      }
+      loading = false; render();
+    };
+
+    // ---- COMMENTS ----
+    async function fetchComments(postId) {
+      try {
+        let res = await appwriteRequest(`databases.${DB_ID}.collections.${COMMENTS_COLLECTION_ID}.documents.list?queries[]="postId=${postId}"`,'GET');
+        comments[postId] = res.documents.filter(c=>c.approved||isAdmin);
+      } catch { comments[postId]=[]; }
+      renderComments(postId);
+    }
+    window.submitComment = async function(postId) {
+      let name = document.getElementById('cf-name-'+postId).value.trim();
+      let email = document.getElementById('cf-email-'+postId).value.trim();
+      let text = document.getElementById('cf-text-'+postId).value.trim();
+      if (!name || !email || !text) {
+        showSnack('All fields required','#b71c1c'); return;
+      }
+      try {
+        await appwriteRequest(`databases.${DB_ID}.collections.${COMMENTS_COLLECTION_ID}.documents`,'POST',{postId,name,email,text,approved:isAdmin});
+        showSnack(isAdmin?'Comment added!':'Submitted for moderation.','#1976d2');
+        document.getElementById('cf-'+postId).reset();
+        await fetchComments(postId);
+      } catch { showSnack('Failed to submit','#b71c1c'); }
+    }
+    window.deleteComment = async function(cid,postId) {
+      if (!confirm('Delete this comment?')) return;
+      try {
+        await appwriteRequest(`databases.${DB_ID}.collections.${COMMENTS_COLLECTION_ID}.documents.${cid}`,'DELETE');
+        showSnack('Comment deleted','#e53935');
+        await fetchComments(postId);
+      } catch { showSnack('Delete failed','#b71c1c'); }
+    };
+
+    // ---- VIEWS ----
+    async function fetchViews() {
+      try {
+        let res = await appwriteRequest(`databases.${DB_ID}.collections.${VIEWS_COLLECTION_ID}.documents.list`,'GET');
+        postViews = Object.fromEntries(res.documents.map(v=>[v.postId,v.count]));
+      } catch { postViews={}; }
+    }
+    async function incrementView(postId) {
+      // Should be atomic; for demo, we just add 1
+      try {
+        let v = await appwriteRequest(`databases.${DB_ID}.collections.${VIEWS_COLLECTION_ID}.documents.list?queries[]="postId=${postId}"`,'GET');
+        let doc = v.documents[0];
+        if (!doc) {
+          await appwriteRequest(`databases.${DB_ID}.collections.${VIEWS_COLLECTION_ID}.documents`,'POST',{postId,count:1});
+        } else {
+          await appwriteRequest(`databases.${DB_ID}.collections.${VIEWS_COLLECTION_ID}.documents.${doc.$id}`,'PATCH',{count:doc.count+1});
+        }
+      } catch {}
+    }
+
+    // ---- ADMIN ----
+    document.getElementById('login-btn').onclick = function() {
+      showDialog(`
+        <div class="dialog-title">Admin Login</div>
+        <input type="email" id="admin-email" placeholder="Email" autocomplete="username"/>
+        <input type="password" id="admin-pass" placeholder="Password" autocomplete="current-password"/>
+        <div class="dialog-actions">
+          <button class="btn" onclick="window.closeDialog()">Cancel</button>
+          <button class="btn" id="login-submit-btn">Login</button>
+        </div>
+        <div id="login-err" style="color:#e53935;margin-top:4px;"></div>
+      `, ()=>{});
+      document.getElementById('login-submit-btn').onclick = async function() {
+        let email = document.getElementById('admin-email').value.trim();
+        let pass = document.getElementById('admin-pass').value;
+        if(!email || !pass) {
+          document.getElementById('login-err').textContent = "All fields required.";
+          return;
+        }
+        document.getElementById('login-err').textContent = "Logging in...";
+        try {
+          await appwriteRequest('account.sessions.email','POST',{email,password:pass});
+          isAdmin = true;
+          updateAdminUI();
+          removeDialog();
+          showSnack('Logged in!','#1976d2');
+        } catch(e) {
+          document.getElementById('login-err').textContent = "Login failed.";
+        }
+      }
+    };
+    document.getElementById('admin-btn').onclick = function() {
+      showDialog(`
+        <div class="dialog-title">Admin Dashboard - Create Post</div>
+        <input id="new-title" placeholder="Title"/>
+        <textarea id="new-content" placeholder="Content"></textarea>
+        <input id="new-tags" placeholder="Tags (comma-separated)"/>
+        <input id="new-cat" placeholder="Category"/>
+        <div class="dialog-actions">
+          <button class="btn" onclick="window.closeDialog()">Close</button>
+          <button class="btn" id="create-post-btn">Create</button>
+        </div>
+      `, ()=>{});
+      document.getElementById('create-post-btn').onclick = async function() {
+        let title = document.getElementById('new-title').value.trim();
+        let content = document.getElementById('new-content').value.trim();
+        let tagsArr = document.getElementById('new-tags').value.split(',').map(v=>v.trim()).filter(Boolean);
+        let cat = document.getElementById('new-cat').value.trim();
+        if(!title || !content) {
+          showSnack('Title and content required','#b71c1c'); return;
+        }
+        try {
+          await appwriteRequest(`databases.${DB_ID}.collections.${POSTS_COLLECTION_ID}.documents`,'POST',{title,content,tags:tagsArr,category:cat});
+          showSnack('Post created!','#1976d2');
+          removeDialog();
+          await fetchPosts();
+        } catch {
+          showSnack('Create failed','#b71c1c');
+        }
+      }
+    };
+    document.getElementById('logout-btn').onclick = async function() {
+      await appwriteRequest('account.sessions.current','DELETE');
+      isAdmin = false;
+      updateAdminUI();
+      showSnack('Logged out.','#1976d2');
+    };
+
+    window.closeDialog = removeDialog;
+
+    function updateAdminUI() {
+      document.getElementById('login-btn').style.display = isAdmin?'none':'';
+      document.getElementById('logout-btn').style.display = isAdmin?'':'none';
+      document.getElementById('admin-btn').style.display = isAdmin?'':'none';
+      render();
+    }
+
+    // ---- NEWSLETTER ----
+    window.signupNewsletter = function() {
+      showSnack('Subscribed (demo only)!','#1976d2');
+      document.getElementById('newsletter-email').value='';
+    };
+
+    // ---- ABOUT/CONTACT ----
+    document.getElementById('about-btn').onclick = function() {
+      showDialog(`<div class="about-box"><h2>About Matin</h2>
+      <img src="https://ui-avatars.com/api/?name=Matin&background=1976d2&color=fff" style="border-radius:50%"/>
+      <div style="margin:12px 0;">Hi, I'm Matin. Welcome to my classic blog! Here I share thoughts on tech, code, and more.</div>
+      <div>Contact: <a href="#" onclick="document.getElementById('contact-btn').click();return false;">Contact form</a></div>
+      </div>
+      <div class="dialog-actions"><button class="btn" onclick="window.closeDialog()">Close</button></div>`);
+    };
+    document.getElementById('contact-btn').onclick = function() {
+      showDialog(`<div class="about-box"><h2>Contact Me</h2>
+      <form onsubmit="window.sendContact();return false;">
+        <input placeholder="Your name" id="contact-name" required/>
+        <input type="email" placeholder="Your email" id="contact-email" required/>
+        <textarea placeholder="Message" id="contact-msg" required></textarea>
+        <div class="dialog-actions">
+          <button class="btn" type="submit">Send</button>
+          <button class="btn" onclick="window.closeDialog();return false;">Close</button>
+        </div>
+      </form></div>`);
+    };
+    window.sendContact = function() {
+      showSnack('Message sent (demo only)!','#1976d2');
+      window.closeDialog();
+    };
+
+    // ---- APPWRITE REST API WRAPPER ----
+    async function appwriteRequest(path, method="GET", data) {
+      let url, payload, headers = {
+        'X-Appwrite-Project': APPWRITE_PROJECT,
+        'Content-Type': 'application/json'
+      };
+      if (path.startsWith('account.sessions.email')) {
+        url = APPWRITE_ENDPOINT+'/account/sessions/email';
+        payload = JSON.stringify({ email: data.email, password: data.password });
+        method = 'POST';
+      } else if (path.startsWith('account.sessions.current')) {
+        url = APPWRITE_ENDPOINT+'/account/sessions/current';
+      } else if (path.startsWith('account.get')) {
+        url = APPWRITE_ENDPOINT+'/account';
+      } else if (path.startsWith('databases')) {
+        url = APPWRITE_ENDPOINT + '/' + path.replace(/\./g,'/').replace('documents/','documents/');
+        if (method==='POST' && !url.endsWith('documents')) url += '/documents';
+      } else {
+        url = APPWRITE_ENDPOINT + '/' + path.replace(/\./g,'/');
+      }
+      let opts = { method, headers, credentials:'include' };
+      if (method==='POST' || method==='PATCH') opts.body = payload || JSON.stringify(data);
+      let res = await fetch(url, opts);
+      if (!res.ok) throw new Error(await res.text());
+      return await res.json();
+    }
+
+    // ---- UTILS ----
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g,function(s){
+        return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]);
+      });
+    }
+    function formatArchiveDate(d) {
+      let dt = new Date(d);
+      return dt.toLocaleString('default',{month:'short',year:'numeric'});
+    }
+
+    // ---- INITIALIZE ----
+    async function checkAdmin() {
+      try {
+        await appwriteRequest('account.get','GET');
+        isAdmin = true;
+      } catch {
+        isAdmin = false;
+      }
+      updateAdminUI();
+    }
+
+    (async function(){
+      await checkAdmin();
+      await fetchPosts();
+      await fetchViews();
+    })();
+  </script>
+</body>
+</html>
