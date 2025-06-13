@@ -467,13 +467,14 @@
       cars.forEach((car, idx) => {
         const delay = 0.08 * idx;
         const features = car.features ? (Array.isArray(car.features) ? car.features : car.features.split(',')) : [];
+        const soldBadge = car.sold ? ' <span style="color:#e53935;font-size:1rem;">[SOLD]</span>' : '';
         const card = document.createElement('div');
         card.className = "car-card";
         card.style.animationDelay = delay + 's';
         card.innerHTML = `
           <div class="car-img"><img src="${car.image}" alt="${car.title}"></div>
           <div class="car-content">
-            <div class="car-title">${car.title}</div>
+            <div class="car-title">${car.title}${soldBadge}</div>
             <div class="car-model">${car.model}</div>
             <div class="car-desc">${car.description.slice(0, 84)}...</div>
             <div class="car-features">${features.map(f => `<span>${f.trim()}</span>`).join('')}</div>
@@ -492,13 +493,14 @@
       const car = cars.find(c => c.$id === id);
       if (!car) return;
       const features = car.features ? (Array.isArray(car.features) ? car.features : car.features.split(',')) : [];
+      const soldBadge = car.sold ? ' <span style="color:#e53935;font-size:1rem;">[SOLD]</span>' : '';
       const modalRoot = document.getElementById('modal-root');
       modalRoot.innerHTML = `
         <div class="modal-backdrop" onclick="closeModal(event)">
           <div class="modal" onclick="event.stopPropagation()">
             <button class="modal-close" onclick="closeModal(event)" title="Close">&times;</button>
             <img class="modal-img" src="${car.image}" alt="${car.title}">
-            <div class="modal-title">${car.title}</div>
+            <div class="modal-title">${car.title}${soldBadge}</div>
             <div class="modal-model">Model Year: ${car.model}</div>
             <div class="modal-price">Price: ${car.price}</div>
             <div class="modal-features">${features.map(f => `<span>${f.trim()}</span>`).join(' ')}</div>
@@ -637,9 +639,9 @@
         // Construct public URL for the image
         const imageUrl = `${APPWRITE_ENDPOINT}/storage/buckets/${BUCKET_ID}/files/${imageFileId}/view?project=${APPWRITE_PROJECT}`;
 
-        // Create car document with image URL
+        // Create car document with image URL and sold:false
         await db.createDocument(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, Appwrite.ID.unique(), {
-          title, model, price, description, image: imageUrl, features
+          title, model, price, description, image: imageUrl, features, sold: false
         });
 
         document.getElementById('adminMsg').innerText = "Car added successfully!";
@@ -650,15 +652,51 @@
       }
     }
 
-    // --- Admin List of Cars (simple) ---
+    // --- Admin List of Cars (with Delete and Mark as Sold) ---
     function renderAdminCarList() {
       if (!isAdmin) return;
       let html = "<div style='margin-bottom:10px;font-weight:700;'>All Cars</div>";
       if (!cars.length) html += "<div>No cars found.</div>";
       else cars.forEach(car => {
-        html += `<div class="admin-car-title">${car.title} (${car.model}) - <span style="color:#3167e6;">${car.price}</span></div>`;
+        const soldLabel = car.sold ? '<span style="color:#e53935;font-weight:700;"> [SOLD]</span>' : '';
+        html += `
+          <div class="admin-car-title">
+            ${car.title} (${car.model}) - <span style="color:#3167e6;">${car.price}</span>${soldLabel}
+            <button onclick="deleteCar('${car.$id}', '${car.image.replace(/'/g,"\\'")}')">Delete</button>
+            ${!car.sold ? `<button onclick="markSold('${car.$id}')">Mark as Sold</button>` : ''}
+          </div>
+        `;
       });
       document.getElementById('adminList').innerHTML = html;
+    }
+
+    // --- Delete Car (document + image) ---
+    async function deleteCar(carId, imageUrl) {
+      if (!confirm("Are you sure you want to delete this car?")) return;
+      try {
+        // Delete car document
+        await db.deleteDocument(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, carId);
+        // Extract fileId from imageUrl
+        const match = imageUrl.match(/files\/(.*?)\//);
+        if (match && match[1]) {
+          const fileId = match[1];
+          await storage.deleteFile(BUCKET_ID, fileId);
+        }
+        await loadCars();
+        alert("Car deleted.");
+      } catch (e) {
+        alert("Failed to delete car.");
+      }
+    }
+
+    // --- Mark as Sold ---
+    async function markSold(carId) {
+      try {
+        await db.updateDocument(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, carId, { sold: true });
+        await loadCars();
+      } catch (e) {
+        alert("Failed to mark as sold.");
+      }
     }
 
     // --- On Load: check session ---
