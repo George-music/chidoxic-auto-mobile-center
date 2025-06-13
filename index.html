@@ -2,56 +2,306 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Chidix Auto Enterprise</title>
-  <meta name="description" content="Find your dream car at Chidoxic Auto Mobile Center. Browse, book, and inquire about top vehicles.">
-  <meta property="og:title" content="Chidoxic Auto Mobile Center">
-  <meta property="og:description" content="Find your dream car at Chidoxic Auto Mobile Center. Browse, book, and inquire about top vehicles.">
-  <meta property="og:image" content="/icon-512.png">
+  <title>Chidoxic Auto Mobile Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="/icon-192.png" type="image/png">
-  <link rel="apple-touch-icon" href="/icon-192.png">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <style>
-    html, body { margin: 0; padding: 0; font-family: 'Inter', Arial, sans-serif; background: #f7f8fa; color: #1a2233; min-height: 100vh; }
-    .appbar { background: linear-gradient(90deg, #3167e6 50%, #1a2233 100%); color: #fff; padding: 0 24px; height: 62px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(49,103,230,0.08); font-weight: 600; position: sticky; top: 0; z-index: 10;}
-    .appbar-title { font-size: 2rem; letter-spacing: 1.5px; font-weight: 800; text-shadow: 0 2px 6px rgba(49,103,230,0.09); display: flex; align-items: center;}
-    .logo { width: 38px; height: 38px; margin-right: 12px; border-radius: 50%; object-fit: cover; background: #fff; border: 2px solid #3167e6;}
-    .appbar-btns button { margin-left: 14px; background: rgba(255,255,255,0.10); border: none; color: #fff; font-size: 1.07rem; padding: 9px 18px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: background .25s, transform .13s; outline: none; box-shadow: 0 2px 6px rgba(49,103,230,0.08);}
-    .appbar-btns button:hover { background: #fff; color: #3167e6; transform: translateY(-2px) scale(1.05);}
-    .main { max-width: 1180px; margin: 40px auto 32px auto; padding: 0 14px; display: flex; flex-direction: column; align-items: center; animation: fadein .7s cubic-bezier(.5, .1, .7, 1) 1;}
-    .hero { width: 100%; background: linear-gradient(90deg, #e3ebff 70%, #f7f8fa 100%); border-radius: 14px; display: flex; gap: 48px; align-items: center; justify-content: space-between; padding: 40px 36px 38px 36px; margin-bottom: 30px; animation: slideDown .7s cubic-bezier(.5, .1, .7, 1);}
-    .hero-content { flex: 1 1 350px;}
-    .hero-title { font-size: 2.4rem; color: #3167e6; font-weight: 800; margin-bottom: 8px; line-height: 1.18;}
-    .hero-desc { font-size: 1.14rem; color: #26314a; margin-bottom: 16px; font-weight: 500; line-height: 1.5;}
-    .hero-action { background: #3167e6; color: #fff; font-weight: 700; font-size: 1.07rem; border: none; padding: 12px 28px; border-radius: 6px; box-shadow: 0 4px 14px rgba(49,103,230,0.13); cursor: pointer; transition: background .2s, transform .14s;}
-    .hero-action:hover { background: #1a2233; color: #fff; transform: scale(1.07);}
-    .hero-img { flex: 0 0 340px; min-width: 200px; text-align: right; animation: floatCar 3s infinite ease-in-out alternate;}
-    .hero-img img { width: 320px; max-width: 100%; border-radius: 12px; box-shadow: 0 8px 32px 0 rgba(49,103,230,0.13);}
-    @keyframes floatCar { 0% { transform: translateY(0);} 100% { transform: translateY(18px);}}
-    @keyframes fadein { from { opacity: 0; } to { opacity: 1; }}
-    @keyframes slideDown { from { opacity: 0; transform: translateY(-32px);} to { opacity: 1; transform: translateY(0);}}
-    .car-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 32px; width: 100%; margin-top: 8px;}
-    .car-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 16px rgba(49,103,230,0.04), 0 1.5px 7px rgba(26,34,51,0.06); overflow: hidden; transition: box-shadow .25s, transform .15s; display: flex; flex-direction: column; position: relative; animation: fadein .8s cubic-bezier(.5, .1, .7, 1) both;}
-    .car-card:hover { box-shadow: 0 12px 32px rgba(49,103,230,0.11), 0 3px 12px rgba(26,34,51,0.07); transform: translateY(-7px) scale(1.025);}
-    .car-img { width: 100%; height: 196px; background: #e3ebff; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;}
-    .car-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.5,.1,.7,1);}
-    .car-card:hover .car-img img { transform: scale(1.08) rotate(-1.3deg);}
-    .car-content { padding: 22px 26px 18px 26px; flex: 1 1 auto; display: flex; flex-direction: column;}
-    .car-title { font-size: 1.28rem; font-weight: 700; color: #26314a; margin: 0 0 4px 0; letter-spacing: .6px;}
-    .car-model { font-size: 1.07rem; color: #3167e6; font-weight: 600; margin-bottom: 9px; letter-spacing: .5px;}
-    .car-desc { color: #444e62; font-size: 1.01rem; flex: 1 1 auto; margin-bottom: 12px; opacity: .82; line-height: 1.5; transition: color .14s;}
-    .car-price { font-size: 1.22rem; font-weight: 700; color: #1a2233; margin-bottom: 8px; letter-spacing: .3px; transition: color .13s;}
-    .car-features { font-size: 0.97rem; color: #3167e6; margin-bottom: 7px; display: flex; flex-wrap: wrap; gap: 8px;}
-    .car-features span { background: #e3ebff; color: #3167e6; font-weight: 500; border-radius: 5px; padding: 2px 10px; font-size: 0.97rem; margin-top: 2px; display: inline-block; transition: background .14s;}
-    .car-action { margin-top: 10px; display: flex; align-items: center; justify-content: flex-end;}
-    .car-action button { background: #3167e6; color: #fff; border: none; font-size: 1.02rem; font-weight: 700; padding: 10px 22px; border-radius: 6px; cursor: pointer; transition: background .2s, transform .14s; box-shadow: 0 2px 8px rgba(49,103,230,0.09);}
-    .car-action button:hover { background: #1a2233; transform: scale(1.06);}
-    .modal-backdrop { position: fixed; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(26,34,51,0.18); z-index: 999; display: flex; align-items: center; justify-content: center; animation: fadein .25s;}
-    .modal { background: #fff; border-radius: 14px; min-width: 330px; max-width: 96vw; max-height: 93vh; overflow-y: auto; box-shadow: 0 12px 48px 0 rgba(49,103,230,0.16); animation: fadein .26s; padding: 34px 34px 28px 34px; position: relative;}
-    .modal-close { position: absolute; top: 15px; right: 18px; font-size: 1.5rem; color: #3167e6; background: none; border: none; cursor: pointer; font-weight: 800; transition: color .17s;}
+        html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      background: #f7f8fa;
+      color: #1a2233;
+      min-height: 100vh;
+    }
+    .appbar {
+      background: linear-gradient(90deg, #3167e6 50%, #1a2233 100%);
+      color: #fff;
+      padding: 0 24px;
+      height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(49,103,230,0.08);
+      font-weight: 600;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .appbar-title {
+      font-size: 2rem;
+      letter-spacing: 1.5px;
+      font-weight: 800;
+      text-shadow: 0 2px 6px rgba(49,103,230,0.09);
+      display: flex;
+      align-items: center;
+    }
+    .logo {
+      width: 38px;
+      height: 38px;
+      margin-right: 12px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #fff;
+      border: 2px solid #3167e6;
+    }
+    .appbar-btns button {
+      margin-left: 14px;
+      background: rgba(255,255,255,0.10);
+      border: none;
+      color: #fff;
+      font-size: 1.07rem;
+      padding: 9px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background .25s, transform .13s;
+      outline: none;
+      box-shadow: 0 2px 6px rgba(49,103,230,0.08);
+    }
+    .appbar-btns button:hover {
+      background: #fff;
+      color: #3167e6;
+      transform: translateY(-2px) scale(1.05);
+    }
+    .main {
+      max-width: 1180px;
+      margin: 40px auto 32px auto;
+      padding: 0 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: fadein .7s cubic-bezier(.5, .1, .7, 1) 1;
+    }
+    /* Hero Section */
+    .hero {
+      width: 100%;
+      background: linear-gradient(90deg, #e3ebff 70%, #f7f8fa 100%);
+      border-radius: 14px;
+      display: flex;
+      gap: 48px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 40px 36px 38px 36px;
+      margin-bottom: 30px;
+      animation: slideDown .7s cubic-bezier(.5, .1, .7, 1);
+    }
+    .hero-content {
+      flex: 1 1 350px;
+    }
+    .hero-title {
+      font-size: 2.4rem;
+      color: #3167e6;
+      font-weight: 800;
+      margin-bottom: 8px;
+      line-height: 1.18;
+    }
+    .hero-desc {
+      font-size: 1.14rem;
+      color: #26314a;
+      margin-bottom: 16px;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+    .hero-action {
+      background: #3167e6;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.07rem;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 6px;
+      box-shadow: 0 4px 14px rgba(49,103,230,0.13);
+      cursor: pointer;
+      transition: background .2s, transform .14s;
+    }
+    .hero-action:hover {
+      background: #1a2233;
+      color: #fff;
+      transform: scale(1.07);
+    }
+    .hero-img {
+      flex: 0 0 340px;
+      min-width: 200px;
+      text-align: right;
+      animation: floatCar 3s infinite ease-in-out alternate;
+    }
+    .hero-img img {
+      width: 320px;
+      max-width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px 0 rgba(49,103,230,0.13);
+    }
+    @keyframes floatCar {
+      0% { transform: translateY(0);}
+      100% { transform: translateY(18px);}
+    }
+    @keyframes fadein {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-32px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+
+    /* Car cards grid */
+    .car-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+      gap: 32px;
+      width: 100%;
+      margin-top: 8px;
+    }
+    .car-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(49,103,230,0.04), 0 1.5px 7px rgba(26,34,51,0.06);
+      overflow: hidden;
+      transition: box-shadow .25s, transform .15s;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      animation: fadein .8s cubic-bezier(.5, .1, .7, 1) both;
+    }
+    .car-card:hover {
+      box-shadow: 0 12px 32px rgba(49,103,230,0.11), 0 3px 12px rgba(26,34,51,0.07);
+      transform: translateY(-7px) scale(1.025);
+    }
+    .car-img {
+      width: 100%;
+      height: 196px;
+      background: #e3ebff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .car-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .7s cubic-bezier(.5,.1,.7,1);
+    }
+    .car-card:hover .car-img img {
+      transform: scale(1.08) rotate(-1.3deg);
+    }
+    .car-content {
+      padding: 22px 26px 18px 26px;
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .car-title {
+      font-size: 1.28rem;
+      font-weight: 700;
+      color: #26314a;
+      margin: 0 0 4px 0;
+      letter-spacing: .6px;
+    }
+    .car-model {
+      font-size: 1.07rem;
+      color: #3167e6;
+      font-weight: 600;
+      margin-bottom: 9px;
+      letter-spacing: .5px;
+    }
+    .car-desc {
+      color: #444e62;
+      font-size: 1.01rem;
+      flex: 1 1 auto;
+      margin-bottom: 12px;
+      opacity: .82;
+      line-height: 1.5;
+      transition: color .14s;
+    }
+    .car-price {
+      font-size: 1.22rem;
+      font-weight: 700;
+      color: #1a2233;
+      margin-bottom: 8px;
+      letter-spacing: .3px;
+      transition: color .13s;
+    }
+    .car-features {
+      font-size: 0.97rem;
+      color: #3167e6;
+      margin-bottom: 7px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .car-features span {
+      background: #e3ebff;
+      color: #3167e6;
+      font-weight: 500;
+      border-radius: 5px;
+      padding: 2px 10px;
+      font-size: 0.97rem;
+      margin-top: 2px;
+      display: inline-block;
+      transition: background .14s;
+    }
+    .car-action {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .car-action button {
+      background: #3167e6;
+      color: #fff;
+      border: none;
+      font-size: 1.02rem;
+      font-weight: 700;
+      padding: 10px 22px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background .2s, transform .14s;
+      box-shadow: 0 2px 8px rgba(49,103,230,0.09);
+    }
+    .car-action button:hover {
+      background: #1a2233;
+      transform: scale(1.06);
+    }
+    /* Car Modal Animation */
+    .modal-backdrop {
+      position: fixed;
+      left: 0; top: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(26,34,51,0.18);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadein .25s;
+    }
+    .modal {
+      background: #fff;
+      border-radius: 14px;
+      min-width: 330px;
+      max-width: 96vw;
+      max-height: 93vh;
+      overflow-y: auto;
+      box-shadow: 0 12px 48px 0 rgba(49,103,230,0.16);
+      animation: fadein .26s;
+      padding: 34px 34px 28px 34px;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute; top: 15px; right: 18px;
+      font-size: 1.5rem;
+      color: #3167e6;
+      background: none; border: none; cursor: pointer;
+      font-weight: 800;
+      transition: color .17s;
+    }
     .modal-close:hover { color: #e53935; }
-    .modal-img { width: 100%; max-width: 440px; margin: 0 auto 24px auto; display: block; border-radius: 10px; box-shadow: 0 2px 12px rgba(49,103,230,0.13); animation: floatCar 3s infinite alternate;}
+    .modal-img {
+      width: 100%; max-width: 440px; margin: 0 auto 24px auto; display: block; border-radius: 10px; box-shadow: 0 2px 12px rgba(49,103,230,0.13);
+      animation: floatCar 3s infinite alternate;
+    }
     .modal-title { font-size: 2rem; font-weight: 800; margin-bottom: 4px; color: #3167e6; }
     .modal-model { color: #26314a; font-size: 1.18rem; font-weight: 700; margin-bottom: 8px; }
     .modal-price { font-size: 1.33rem; font-weight: 700; color: #1a2233; margin-bottom: 8px; }
@@ -61,24 +311,39 @@
     .modal-action { text-align: right; }
     .modal-action button { background: #3167e6; color: #fff; border: none; font-size: 1.09rem; font-weight: 700; padding: 10px 27px; border-radius: 7px; cursor: pointer; transition: background .2s, transform .14s; margin:0; }
     .modal-action button:hover { background: #26314a; }
-    .admin-panel { width: 100%; max-width: 540px; margin: 40px auto 0 auto; padding: 32px 28px 28px 28px; background: #fff; border-radius: 14px; box-shadow: 0 4px 18px rgba(49,103,230,0.07); display: none; flex-direction: column; gap: 18px; }
+
+    /* Admin Panel Styles */
+    .admin-panel {
+      width: 100%;
+      max-width: 540px;
+      margin: 40px auto 0 auto;
+      padding: 32px 28px 28px 28px;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 4px 18px rgba(49,103,230,0.07);
+      display: none;
+      flex-direction: column;
+      gap: 18px;
+    }
     .admin-panel.active { display: flex; }
     .admin-title { font-weight: 800; font-size: 1.3rem; margin-bottom: 12px; color: #3167e6;}
     .admin-form label { font-weight: 600; display: block; margin-top: 8px; }
-    .admin-form input, .admin-form textarea { width: 100%; padding: 8px 10px; font-size: 1rem; border-radius: 6px; border: 1px solid #c7d1eb; margin-top: 3px;}
+    .admin-form input, .admin-form textarea {
+      width: 100%; padding: 8px 10px; font-size: 1rem; border-radius: 6px; border: 1px solid #c7d1eb; margin-top: 3px;
+    }
     .admin-form textarea { min-height: 54px; }
-    .admin-form .form-row { margin-bottom: 11px; }
-    .admin-form button { background: #3167e6; color: #fff; font-weight: 700; padding: 10px 22px; border: none; border-radius: 6px; cursor: pointer; transition: background .17s;}
+    .admin-form .admin-row { margin-bottom: 11px; }
+    .admin-form button {
+      background: #3167e6; color: #fff; font-weight: 700; padding: 10px 22px; border: none; border-radius: 6px; cursor: pointer;
+      transition: background .17s;
+    }
     .admin-form button:hover { background: #1a2233;}
     .admin-logout { margin-top: 12px; color: #e53935; background: none; border: none; cursor: pointer; font-weight: 700;}
     .admin-list { margin-top: 28px;}
     .admin-car-title { font-weight: 700; }
     .admin-msg { color: #e53935; margin-bottom: 7px; font-size: .98rem;}
-    .bulk-upload-btn { margin-bottom: 12px; background: #1a2233; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;}
-    .bulk-upload-btn:hover { background: #3167e6;}
-    .social-share { margin-top: 10px; }
-    .social-share button { margin-right: 6px; background: #e3ebff; color: #3167e6; border: none; padding: 7px 14px; border-radius: 5px; cursor: pointer; transition: background .15s;}
-    .social-share button:hover { background: #3167e6; color: #fff; }
+    .hidden {display:none;}
+
     @media (max-width: 900px) {
       .hero { flex-direction: column; gap: 16px; padding: 32px 12px; }
       .hero-img { text-align: center;}
@@ -94,13 +359,19 @@
       .modal { padding: 20px 5vw 16px 5vw;}
       .modal-title { font-size: 1.2rem;}
     }
+
+    .bulk-upload-btn { margin: 8px 0 14px 0; background: #1a2233; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;}
+    .bulk-upload-btn:hover { background: #3167e6;}
+    .social-share { margin-top: 10px; }
+    .social-share button { margin-right: 6px; background: #e3ebff; color: #3167e6; border: none; padding: 7px 14px; border-radius: 5px; cursor: pointer; transition: background .15s;}
+    .social-share button:hover { background: #3167e6; color: #fff; }
   </style>
 </head>
 <body>
   <nav class="appbar">
     <span class="appbar-title">
       <img src="https://i.ibb.co/4W2DGKm/car-logo.png" class="logo" alt="Chidoxic Logo"/>
-      Chidix Auto enterprise
+      Chidoxic Auto Mobile Center
     </span>
     <span class="appbar-btns">
       <button onclick="scrollToSection('gallery')">Browse Cars</button>
@@ -121,7 +392,7 @@
         <button class="hero-action" onclick="scrollToSection('gallery')">View Cars</button>
       </div>
       <div class="hero-img">
-        <img src="https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=720&q=80" alt="Modern Car" loading="lazy"/>
+        <img src="https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=720&q=80" alt="Modern Car"/>
       </div>
     </section>
     <!-- Car Cards Section -->
@@ -131,27 +402,27 @@
       <div class="admin-title">Admin Panel</div>
       <form class="admin-form" id="adminForm" enctype="multipart/form-data">
         <div class="admin-msg" id="adminMsg"></div>
-        <div class="form-row">
+        <div class="admin-row">
           <label for="carTitle">Title</label>
           <input type="text" id="carTitle" required>
         </div>
-        <div class="form-row">
+        <div class="admin-row">
           <label for="carModel">Model Year</label>
           <input type="text" id="carModel" required>
         </div>
-        <div class="form-row">
+        <div class="admin-row">
           <label for="carPrice">Price</label>
           <input type="text" id="carPrice" required>
         </div>
-        <div class="form-row">
+        <div class="admin-row">
           <label for="carDesc">Description</label>
           <textarea id="carDesc" required></textarea>
         </div>
-        <div class="form-row">
+        <div class="admin-row">
           <label for="carImageFile">Car Image</label>
           <input type="file" id="carImageFile" accept="image/*">
         </div>
-        <div class="form-row">
+        <div class="admin-row">
           <label for="carFeatures">Features (comma separated)</label>
           <input type="text" id="carFeatures" required>
         </div>
@@ -164,429 +435,442 @@
     </section>
   </main>
   <div id="modal-root"></div>
-  <!-- Live chat integration (replace YOUR_PROPERTY_ID with your Tawk.to code) -->
-  <script type="text/javascript">
-  var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-  (function(){var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-  s1.async=true;
-  s1.src='https://embed.tawk.to/YOUR_PROPERTY_ID/1h0rsqv2d';
-  s1.charset='UTF-8';
-  s1.setAttribute('crossorigin','*');
-  s0.parentNode.insertBefore(s1,s0);
-  })();
-  </script>
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js');
-    }
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script>
-    // --- Appwrite & state ---
-const APPWRITE_ENDPOINT = "https://fra.cloud.appwrite.io/v1";
-const APPWRITE_PROJECT = "684c13530011df315968";
-const APPWRITE_DB_ID = "684c1377001ab5d7cbc9";
-const APPWRITE_COLLECTION_ID = "684c138c000f8065661f";
-const BUCKET_ID = "684c2916001d475351b8";
-const ADMIN_EMAILS = ["supremeamerapplications@gmail.com", "supremealpha04@gmail.com"];
+    // --- Appwrite Config ---
+    const APPWRITE_ENDPOINT = "https://fra.cloud.appwrite.io/v1";
+    const APPWRITE_PROJECT = "684c13530011df315968";
+    const APPWRITE_DB_ID = "684c1377001ab5d7cbc9";
+    const APPWRITE_COLLECTION_ID = "684c138c000f8065661f";
+    const BUCKET_ID = "684c2916001d475351b8";
+    const ADMIN_EMAILS = ["supremeamerapplications@gmail.com", "supremealpha04@gmail.com"];
 
-const client = new Appwrite.Client();
-client.setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT);
-const account = new Appwrite.Account(client);
-const db = new Appwrite.Databases(client);
-const storage = new Appwrite.Storage(client);
+    const client = new Appwrite.Client();
+    client.setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT);
+    const account = new Appwrite.Account(client);
+    const db = new Appwrite.Databases(client);
+    const storage = new Appwrite.Storage(client);
 
-let cars = [];
-let isAdmin = false;
+    let cars = [];
+    let isAdmin = false;
 
-// --- Load Cars from Appwrite ---
-async function loadCars() {
-  try {
-    const res = await db.listDocuments(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, [Appwrite.Query.orderDesc("$createdAt")]);
-    cars = res.documents;
-    renderCars();
-    renderAdminCarList();
-  } catch (e) {
-    document.getElementById('gallery').innerHTML = "<div style='color:#e53935;font-weight:700;'>Failed to load cars.</div>";
-  }
-}
-
-// --- Render Car Cards ---
-function renderCars() {
-  const gallery = document.getElementById('gallery');
-  gallery.innerHTML = "";
-  cars.forEach((car, idx) => {
-    const delay = 0.08 * idx;
-    const features = car.features ? (Array.isArray(car.features) ? car.features : car.features.split(',')) : [];
-    const soldBadge = car.sold ? ' <span style="color:#e53935;font-size:1rem;">[SOLD]</span>' : '';
-    const card = document.createElement('div');
-    card.className = "car-card";
-    card.style.animationDelay = delay + 's';
-    card.innerHTML = `
-      <div class="car-img"><img src="${car.image}" alt="${car.title}" loading="lazy"></div>
-      <div class="car-content">
-        <div class="car-title">${car.title}${soldBadge}</div>
-        <div class="car-model">${car.model}</div>
-        <div class="car-desc">${car.description.slice(0, 84)}...</div>
-        <div class="car-features">${features.map(f => `<span>${f.trim()}</span>`).join('')}</div>
-        <div class="car-price">${car.price}</div>
-        <div class="car-action">
-          <button onclick="showCarModal('${car.$id}')">Details / Inquiry</button>
-        </div>
-      </div>
-    `;
-    gallery.appendChild(card);
-  });
-}
-
-// --- Modal Logic ---
-function showCarModal(id) {
-  const car = cars.find(c => c.$id === id);
-  if (!car) return;
-  const features = car.features ? (Array.isArray(car.features) ? car.features : car.features.split(',')) : [];
-  const soldBadge = car.sold ? ' <span style="color:#e53935;font-size:1rem;">[SOLD]</span>' : '';
-  const modalRoot = document.getElementById('modal-root');
-  modalRoot.innerHTML = `
-    <div class="modal-backdrop" onclick="closeModal(event)">
-      <div class="modal" onclick="event.stopPropagation()">
-        <button class="modal-close" onclick="closeModal(event)" title="Close">&times;</button>
-        <img class="modal-img" src="${car.image}" alt="${car.title}">
-        <div class="modal-title">${car.title}${soldBadge}</div>
-        <div class="modal-model">Model Year: ${car.model}</div>
-        <div class="modal-price">Price: ${car.price}</div>
-        <div class="modal-features">${features.map(f => `<span>${f.trim()}</span>`).join(' ')}</div>
-        <div class="modal-desc">${car.description}</div>
-        <div class="modal-action">
-          <button onclick="showInquiryForm('${car.$id}')">Contact / Inquiry</button>
-          <button onclick="showBookingForm('${car.$id}')">Book Test Drive</button>
-          <button onclick="closeModal(event)">Close</button>
-        </div>
-        ${socialShareLinks(car)}
-      </div>
-    </div>
-  `;
-  document.body.style.overflow = "hidden";
-}
-function closeModal(e) {
-  document.getElementById('modal-root').innerHTML = "";
-  document.body.style.overflow = "";
-}
-
-// --- Social Sharing ---
-function socialShareLinks(car) {
-  const url = encodeURIComponent(window.location.href + '?car=' + car.$id);
-  const text = encodeURIComponent(`Check out this car: ${car.title} - ${car.price}`);
-  return `
-    <div class="social-share">
-      <a target="_blank" href="https://wa.me/?text=${text}%20${url}">
-        <button>WhatsApp</button>
-      </a>
-      <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=${url}">
-        <button>Facebook</button>
-      </a>
-      <a target="_blank" href="https://twitter.com/intent/tweet?text=${text}&url=${url}">
-        <button>Twitter</button>
-      </a>
-    </div>
-  `;
-}
-
-// --- Inquiry Form ---
-window.showInquiryForm = function(id) {
-  const car = cars.find(c => c.$id === id);
-  if (!car) return;
-  const modalRoot = document.getElementById('modal-root');
-  modalRoot.innerHTML = `
-    <div class="modal-backdrop" onclick="closeModal(event)">
-      <div class="modal" onclick="event.stopPropagation()">
-        <button class="modal-close" onclick="closeModal(event)" title="Close">&times;</button>
-        <div class="modal-title">Contact / Inquiry for ${car.title}</div>
-        <form id="inquiryForm">
-          <label>Name</label>
-          <input type="text" id="inqName" required>
-          <label>Email</label>
-          <input type="email" id="inqEmail" required>
-          <label>Phone</label>
-          <input type="tel" id="inqPhone" required>
-          <label>Message</label>
-          <textarea id="inqMsg" required></textarea>
-          <button type="submit">Send Inquiry</button>
-        </form>
-        <div id="inquiryMsg"></div>
-      </div>
-    </div>
-  `;
-  document.getElementById('inquiryForm').onsubmit = async function(e) {
-    e.preventDefault();
-    document.getElementById('inquiryMsg').innerText = "Thank you! We will contact you soon.";
-    closeModal();
-  }
-}
-
-// --- Booking/Test Drive Request ---
-window.showBookingForm = function(id) {
-  const car = cars.find(c => c.$id === id);
-  if (!car) return;
-  const modalRoot = document.getElementById('modal-root');
-  modalRoot.innerHTML = `
-    <div class="modal-backdrop" onclick="closeModal(event)">
-      <div class="modal" onclick="event.stopPropagation()">
-        <button class="modal-close" onclick="closeModal(event)" title="Close">&times;</button>
-        <div class="modal-title">Book Test Drive for ${car.title}</div>
-        <form id="bookForm">
-          <label>Name</label>
-          <input type="text" id="bookName" required>
-          <label>Email</label>
-          <input type="email" id="bookEmail" required>
-          <label>Phone</label>
-          <input type="tel" id="bookPhone" required>
-          <label>Date</label>
-          <input type="date" id="bookDate" required>
-          <label>Message</label>
-          <textarea id="bookMsg"></textarea>
-          <button type="submit">Request Test Drive</button>
-        </form>
-        <div id="bookMsgDiv"></div>
-      </div>
-    </div>
-  `;
-  document.getElementById('bookForm').onsubmit = async function(e) {
-    e.preventDefault();
-    document.getElementById('bookMsgDiv').innerText = "Thank you! We'll confirm your booking soon.";
-    closeModal();
-  }
-}
-
-// --- Scroll to Section ---
-function scrollToSection(id) {
-  const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
-// --- About & Contact Modal ---
-window.showAbout = function() {
-  document.getElementById('modal-root').innerHTML = `
-    <div class="modal-backdrop" onclick="closeModal(event)">
-      <div class="modal" onclick="event.stopPropagation()">
-        <button class="modal-close" onclick="closeModal(event)">&times;</button>
-        <div class="modal-title">About Chidoxic Auto Mobile Center</div>
-        <div class="modal-desc">A modern, animated, and responsive car dealership showcase with cloud-powered data and booking.</div>
-        <div class="modal-action"><button onclick="closeModal(event)">Close</button></div>
-      </div>
-    </div>
-  `;
-  document.body.style.overflow = "hidden";
-}
-window.showContact = function() {
-  document.getElementById('modal-root').innerHTML = `
-    <div class="modal-backdrop" onclick="closeModal(event)">
-      <div class="modal" onclick="event.stopPropagation()">
-        <button class="modal-close" onclick="closeModal(event)">&times;</button>
-        <div class="modal-title">Contact Us</div>
-        <div class="modal-desc">Email: <a href="mailto:info@chidoxicauto.com">info@chidoxicauto.com</a><br>Phone: <a href="tel:+1234567890">+1 (234) 567-890</a></div>
-        <div class="modal-action"><button onclick="closeModal(event)">Close</button></div>
-      </div>
-    </div>
-  `;
-  document.body.style.overflow = "hidden";
-}
-
-// --- Admin Auth & Panel ---
-function toggleAdminPanel() {
-  if (isAdmin) {
-    document.getElementById('adminPanel').classList.toggle('active');
-  } else {
-    showAdminLogin();
-  }
-}
-function showAdminLogin() {
-  document.getElementById('modal-root').innerHTML = `
-    <div class="modal-backdrop" onclick="closeModal(event)">
-      <div class="modal" onclick="event.stopPropagation()">
-        <button class="modal-close" onclick="closeModal(event)">&times;</button>
-        <div class="modal-title">Admin Login</div>
-        <form id="adminLoginForm" style="margin-top:17px;">
-          <label>Email</label>
-          <input type="email" id="adminEmail" required>
-          <label>Password</label>
-          <input type="password" id="adminPassword" required>
-          <button>Login</button>
-          <div id="loginMsg" style="color:#e53935;margin-top:8px;"></div>
-        </form>
-      </div>
-    </div>
-  `;
-  document.body.style.overflow = "hidden";
-  document.getElementById('adminLoginForm').onsubmit = async function(e) {
-    e.preventDefault();
-    const email = document.getElementById('adminEmail').value.trim();
-    const password = document.getElementById('adminPassword').value;
-    if (!ADMIN_EMAILS.includes(email)) {
-      document.getElementById('loginMsg').innerText = "Not authorized.";
-      return;
-    }
-    try {
-      await account.createEmailSession(email, password);
-      isAdmin = true;
-      closeModal();
-      document.getElementById('adminPanel').classList.add('active');
-      renderAdminCarList();
-    } catch (err) {
-      document.getElementById('loginMsg').innerText = "Login failed. Check email and password.";
-    }
-  }
-}
-async function logoutAdmin() {
-  try { await account.deleteSession('current'); } catch {}
-  isAdmin = false;
-  document.getElementById('adminPanel').classList.remove('active');
-}
-
-// --- Admin Add/Edit Car ---
-document.getElementById('adminForm').onsubmit = async function(e) {
-  e.preventDefault();
-  const title = document.getElementById('carTitle').value.trim();
-  const model = document.getElementById('carModel').value.trim();
-  const price = document.getElementById('carPrice').value.trim();
-  const description = document.getElementById('carDesc').value.trim();
-  const features = document.getElementById('carFeatures').value.trim().split(',').map(f=>f.trim()).filter(f=>f);
-  const imageFileInput = document.getElementById('carImageFile');
-  const imageFile = imageFileInput.files[0];
-  const editCarId = document.getElementById('editCarId').value;
-
-  if (!title || !model || !price || !description || (!imageFile && !editCarId) || !features.length) {
-    document.getElementById('adminMsg').innerText = "All fields are required.";
-    return;
-  }
-
-  try {
-    let imageUrl;
-    if (imageFile) {
-      const uploadRes = await storage.createFile(BUCKET_ID, Appwrite.ID.unique(), imageFile);
-      const imageFileId = uploadRes.$id;
-      imageUrl = `${APPWRITE_ENDPOINT}/storage/buckets/${BUCKET_ID}/files/${imageFileId}/view?project=${APPWRITE_PROJECT}`;
-    }
-
-    if (editCarId) {
-      await db.updateDocument(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, editCarId, {
-        title, model, price, description, features, ...(imageUrl ? {image: imageUrl} : {})
-      });
-      document.getElementById('adminMsg').innerText = "Car updated!";
-    } else {
-      await db.createDocument(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, Appwrite.ID.unique(), {
-        title, model, price, description, image: imageUrl, features, sold: false
-      });
-      document.getElementById('adminMsg').innerText = "Car added!";
-    }
-    await loadCars();
-    this.reset();
-    document.getElementById('editCarId').value = "";
-  } catch (err) {
-    document.getElementById('adminMsg').innerText = "Failed to add/update car.";
-  }
-}
-
-// --- Admin List with Edit/Delete/Sold ---
-function renderAdminCarList() {
-  if (!isAdmin) return;
-  let html = "<div style='margin-bottom:10px;font-weight:700;'>All Cars</div>";
-  if (!cars.length) html += "<div>No cars found.</div>";
-  else cars.forEach(car => {
-    const soldLabel = car.sold ? '<span style="color:#e53935;font-weight:700;"> [SOLD]</span>' : '';
-    html += `
-      <div class="admin-car-title">
-        ${car.title} (${car.model}) - <span style="color:#3167e6;">${car.price}</span>${soldLabel}
-        <button onclick="editCar('${car.$id}')">Edit</button>
-        <button onclick="deleteCar('${car.$id}', '${car.image.replace(/'/g,"\\'")}')">Delete</button>
-        ${!car.sold ? `<button onclick="markSold('${car.$id}')">Mark as Sold</button>` : ''}
-      </div>
-    `;
-  });
-  document.getElementById('adminList').innerHTML = html;
-}
-function editCar(carId) {
-  const car = cars.find(c => c.$id === carId);
-  if (!car) return;
-  document.getElementById('carTitle').value = car.title;
-  document.getElementById('carModel').value = car.model;
-  document.getElementById('carPrice').value = car.price;
-  document.getElementById('carDesc').value = car.description;
-  document.getElementById('carFeatures').value = Array.isArray(car.features) ? car.features.join(', ') : car.features;
-  document.getElementById('editCarId').value = car.$id;
-}
-
-// --- Delete Car ---
-async function deleteCar(carId, imageUrl) {
-  if (!confirm("Are you sure you want to delete this car?")) return;
-  try {
-    await db.deleteDocument(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, carId);
-    const match = imageUrl.match(/files\/(.*?)\//);
-    if (match && match[1]) {
-      const fileId = match[1];
-      await storage.deleteFile(BUCKET_ID, fileId);
-    }
-    await loadCars();
-    alert("Car deleted.");
-  } catch (e) {
-    alert("Failed to delete car.");
-  }
-}
-
-// --- Mark as Sold ---
-async function markSold(carId) {
-  try {
-    await db.updateDocument(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, carId, { sold: true });
-    await loadCars();
-  } catch (e) {
-    alert("Failed to mark as sold.");
-  }
-}
-
-// --- Bulk Upload ---
-function showBulkUploadModal() {
-  document.getElementById('modal-root').innerHTML = `
-    <div class="modal-backdrop" onclick="closeModal(event)">
-      <div class="modal" onclick="event.stopPropagation()">
-        <button class="modal-close" onclick="closeModal(event)" title="Close">&times;</button>
-        <div class="modal-title">Bulk Upload Cars (CSV)</div>
-        <input type="file" id="bulkFileInput" accept=".csv"/>
-        <button onclick="handleBulkUpload()">Upload</button>
-        <div id="bulkUploadMsg"></div>
-      </div>
-    </div>
-  `;
-  document.body.style.overflow = "hidden";
-}
-window.handleBulkUpload = async function() {
-  const fileInput = document.getElementById('bulkFileInput');
-  if (!fileInput.files[0]) return;
-  Papa.parse(fileInput.files[0], {
-    header: true,
-    complete: async function(results) {
-      for (const row of results.data) {
-        if (!row.title || !row.model || !row.price || !row.description || !row.image) continue;
-        await db.createDocument(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, Appwrite.ID.unique(), {
-          title: row.title, model: row.model, price: row.price, description: row.description, image: row.image, features: row.features ? row.features.split(',') : [], sold: false
-        });
+    // --- Load Cars from Appwrite ---
+    async function loadCars() {
+      try {
+        const res = await db.listDocuments(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, [Appwrite.Query.orderDesc("$createdAt")]);
+        cars = res.documents;
+        renderCars();
+        renderAdminCarList();
+      } catch (e) {
+        document.getElementById('gallery').innerHTML = "<div style='color:#e53935;font-weight:700;'>Failed to load cars.</div>";
       }
-      document.getElementById('bulkUploadMsg').innerText = "Bulk upload complete!";
-      await loadCars();
     }
-  });
-}
 
-// --- On Load: check session ---
-(async function(){
-  try {
-    const session = await account.get();
-    if (session && ADMIN_EMAILS.includes(session.email)) {
-      isAdmin = true;
-      document.getElementById('adminPanel').classList.add('active');
+    // --- Render Car Cards ---
+    function renderCars() {
+      const gallery = document.getElementById('gallery');
+      gallery.innerHTML = "";
+      cars.forEach((car, idx) => {
+        const delay = 0.08 * idx;
+        const features = car.features ? (Array.isArray(car.features) ? car.features : car.features.split(',')) : [];
+        const soldBadge = car.sold ? ' <span style="color:#e53935;font-size:1rem;">[SOLD]</span>' : '';
+        const card = document.createElement('div');
+        card.className = "car-card";
+        card.style.animationDelay = delay + 's';
+        card.innerHTML = `
+          <div class="car-img"><img src="${car.image}" alt="${car.title}" loading="lazy"></div>
+          <div class="car-content">
+            <div class="car-title">${car.title}${soldBadge}</div>
+            <div class="car-model">${car.model}</div>
+            <div class="car-desc">${car.description.slice(0, 84)}...</div>
+            <div class="car-features">${features.map(f => `<span>${f.trim()}</span>`).join('')}</div>
+            <div class="car-price">${car.price}</div>
+            <div class="car-action">
+              <button onclick="showCarModal('${car.$id}')">Details / Inquiry</button>
+            </div>
+          </div>
+        `;
+        gallery.appendChild(card);
+      });
     }
-  } catch {}
-  loadCars();
-})();
+
+    // --- Car Details Modal ---
+    function showCarModal(id) {
+      const car = cars.find(c => c.$id === id);
+      if (!car) return;
+      const features = car.features ? (Array.isArray(car.features) ? car.features : car.features.split(',')) : [];
+      const soldBadge = car.sold ? ' <span style="color:#e53935;font-size:1rem;">[SOLD]</span>' : '';
+      const modalRoot = document.getElementById('modal-root');
+      modalRoot.innerHTML = `
+        <div class="modal-backdrop" onclick="closeModal(event)">
+          <div class="modal" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event)" title="Close">&times;</button>
+            <img class="modal-img" src="${car.image}" alt="${car.title}">
+            <div class="modal-title">${car.title}${soldBadge}</div>
+            <div class="modal-model">Model Year: ${car.model}</div>
+            <div class="modal-price">Price: ${car.price}</div>
+            <div class="modal-features">${features.map(f => `<span>${f.trim()}</span>`).join(' ')}</div>
+            <div class="modal-desc">${car.description}</div>
+            <div class="modal-action">
+              <button onclick="showInquiryForm('${car.$id}')">Contact / Inquiry</button>
+              <button onclick="showBookingForm('${car.$id}')">Book Test Drive</button>
+              <button onclick="closeModal(event)">Close</button>
+            </div>
+            ${socialShareLinks(car)}
+          </div>
+        </div>
+      `;
+      document.body.style.overflow = "hidden";
+      window.location.hash = "car-" + id; // For deep-link
+    }
+
+    // --- Social Sharing ---
+    function socialShareLinks(car) {
+      const url = encodeURIComponent(window.location.href.split('#')[0] + "#car-" + car.$id);
+      const text = encodeURIComponent(`Check out this car: ${car.title} - ${car.price}`);
+      return `
+        <div class="social-share">
+          <a target="_blank" href="https://wa.me/?text=${text}%20${url}">
+            <button>WhatsApp</button>
+          </a>
+          <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=${url}">
+            <button>Facebook</button>
+          </a>
+          <a target="_blank" href="https://twitter.com/intent/tweet?text=${text}&url=${url}">
+            <button>Twitter</button>
+          </a>
+        </div>
+      `;
+    }
+
+    // --- Inquiry Form ---
+    window.showInquiryForm = function(id) {
+      const car = cars.find(c => c.$id === id);
+      if (!car) return;
+      const modalRoot = document.getElementById('modal-root');
+      modalRoot.innerHTML = `
+        <div class="modal-backdrop" onclick="closeModal(event)">
+          <div class="modal" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event)" title="Close">&times;</button>
+            <div class="modal-title">Contact / Inquiry for ${car.title}</div>
+            <form id="inquiryForm">
+              <label>Name</label>
+              <input type="text" id="inqName" required>
+              <label>Email</label>
+              <input type="email" id="inqEmail" required>
+              <label>Phone</label>
+              <input type="tel" id="inqPhone" required>
+              <label>Message</label>
+              <textarea id="inqMsg" required></textarea>
+              <button type="submit">Send Inquiry</button>
+            </form>
+            <div id="inquiryMsg"></div>
+          </div>
+        </div>
+      `;
+      document.getElementById('inquiryForm').onsubmit = async function(e) {
+        e.preventDefault();
+        document.getElementById('inquiryMsg').innerText = "Thank you! We will contact you soon.";
+        setTimeout(closeModal, 1500);
+      }
+    }
+
+    // --- Booking/Test Drive Form ---
+    window.showBookingForm = function(id) {
+      const car = cars.find(c => c.$id === id);
+      if (!car) return;
+      const modalRoot = document.getElementById('modal-root');
+      modalRoot.innerHTML = `
+        <div class="modal-backdrop" onclick="closeModal(event)">
+          <div class="modal" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event)" title="Close">&times;</button>
+            <div class="modal-title">Book Test Drive for ${car.title}</div>
+            <form id="bookForm">
+              <label>Name</label>
+              <input type="text" id="bookName" required>
+              <label>Email</label>
+              <input type="email" id="bookEmail" required>
+              <label>Phone</label>
+              <input type="tel" id="bookPhone" required>
+              <label>Date</label>
+              <input type="date" id="bookDate" required>
+              <label>Message</label>
+              <textarea id="bookMsg"></textarea>
+              <button type="submit">Request Test Drive</button>
+            </form>
+            <div id="bookMsgDiv"></div>
+          </div>
+        </div>
+      `;
+      document.getElementById('bookForm').onsubmit = async function(e) {
+        e.preventDefault();
+        document.getElementById('bookMsgDiv').innerText = "Thank you! We'll confirm your booking soon.";
+        setTimeout(closeModal, 1500);
+      }
+    }
+
+    // --- Handle Car Detail Deep-linking ---
+    window.addEventListener('hashchange', function() {
+      if (window.location.hash.startsWith("#car-")) {
+        const carId = window.location.hash.replace("#car-", "");
+        showCarModal(carId);
+      } else {
+        closeModal();
+      }
+    });
+
+    // --- Scroll to Section Smoothly ---
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    // --- About & Contact Modal (no change) ---
+    function showAbout() {
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="closeModal(event)">
+          <div class="modal" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event)">&times;</button>
+            <div class="modal-title">About Chidoxic Auto Mobile Center</div>
+            <div class="modal-desc" style="margin-bottom:18px;">
+              <b>Chidoxic Auto Mobile Center</b> is a modern, animated, and responsive car dealership showcase. Browse a handpicked selection of the world's best cars, each presented with smooth UI transitions and info straight from the cloud database.
+              <ul style="padding-left:20px; margin:0;">
+                <li>Modern, clean design with smooth animations and transitions</li>
+                <li>Detailed car info including price, model, features, and high-res images</li>
+                <li>Powered by Appwrite backend</li>
+                <li>Responsive and works on all devices</li>
+              </ul>
+            </div>
+            <div class="modal-action"><button onclick="closeModal(event)">Close</button></div>
+          </div>
+        </div>
+      `;
+      document.body.style.overflow = "hidden";
+    }
+    function showContact() {
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="closeModal(event)">
+          <div class="modal" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event)">&times;</button>
+            <div class="modal-title">Contact Us</div>
+            <div class="modal-desc" style="margin-bottom:16px;">
+              <b>Looking for a car or need more details?</b> <br>
+              Email: <a href="mailto:info@chidoxicauto.com" style="color:#3167e6;">info@chidoxicauto.com</a><br>
+              Phone: <a href="tel:+1234567890" style="color:#3167e6;">+1 (234) 567-890</a><br>
+              Location: 123 Dream Cars Blvd, Auto City, USA
+            </div>
+            <div class="modal-action"><button onclick="closeModal(event)">Close</button></div>
+          </div>
+        </div>
+      `;
+      document.body.style.overflow = "hidden";
+    }
+
+    // --- Admin Panel Logic ---
+    function toggleAdminPanel() {
+      if (isAdmin) {
+        document.getElementById('adminPanel').classList.toggle('active');
+      } else {
+        showAdminLogin();
+      }
+    }
+    function showAdminLogin() {
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="closeModal(event)">
+          <div class="modal" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event)">&times;</button>
+            <div class="modal-title">Admin Login</div>
+            <form id="adminLoginForm" style="margin-top:17px;">
+              <label>Email</label>
+              <input type="email" id="adminEmail" required>
+              <label>Password</label>
+              <input type="password" id="adminPassword" required>
+              <button>Login</button>
+              <div id="loginMsg" style="color:#e53935;margin-top:8px;"></div>
+            </form>
+          </div>
+        </div>
+      `;
+      document.body.style.overflow = "hidden";
+      document.getElementById('adminLoginForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const email = document.getElementById('adminEmail').value.trim();
+        const password = document.getElementById('adminPassword').value;
+        if (!ADMIN_EMAILS.includes(email)) {
+          document.getElementById('loginMsg').innerText = "Not authorized.";
+          return;
+        }
+        try {
+          await account.createEmailSession(email, password);
+          isAdmin = true;
+          closeModal();
+          document.getElementById('adminPanel').classList.add('active');
+          renderAdminCarList();
+        } catch (err) {
+          document.getElementById('loginMsg').innerText = "Login failed. Check email and password.";
+        }
+      }
+    }
+    async function logoutAdmin() {
+      try { await account.deleteSession('current'); } catch {}
+      isAdmin = false;
+      document.getElementById('adminPanel').classList.remove('active');
+    }
+
+    // --- Admin Add/Edit Car Logic ---
+    document.getElementById('adminForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const title = document.getElementById('carTitle').value.trim();
+      const model = document.getElementById('carModel').value.trim();
+      const price = document.getElementById('carPrice').value.trim();
+      const description = document.getElementById('carDesc').value.trim();
+      const features = document.getElementById('carFeatures').value.trim().split(',').map(f=>f.trim()).filter(f=>f);
+      const imageFileInput = document.getElementById('carImageFile');
+      const imageFile = imageFileInput.files[0];
+      const editCarId = document.getElementById('editCarId') ? document.getElementById('editCarId').value : '';
+
+      if (!title || !model || !price || !description || (!imageFile && !editCarId) || !features.length) {
+        document.getElementById('adminMsg').innerText = "All fields are required.";
+        return;
+      }
+
+      try {
+        let imageUrl;
+        if (imageFile) {
+          const uploadRes = await storage.createFile(BUCKET_ID, Appwrite.ID.unique(), imageFile);
+          const imageFileId = uploadRes.$id;
+          imageUrl = `${APPWRITE_ENDPOINT}/storage/buckets/${BUCKET_ID}/files/${imageFileId}/view?project=${APPWRITE_PROJECT}`;
+        }
+
+        if (editCarId) {
+          await db.updateDocument(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, editCarId, {
+            title, model, price, description, features, ...(imageUrl ? {image: imageUrl} : {})
+          });
+          document.getElementById('adminMsg').innerText = "Car updated!";
+        } else {
+          await db.createDocument(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, Appwrite.ID.unique(), {
+            title, model, price, description, image: imageUrl, features, sold: false
+          });
+          document.getElementById('adminMsg').innerText = "Car added!";
+        }
+        await loadCars();
+        this.reset();
+        document.getElementById('editCarId').value = "";
+      } catch (err) {
+        document.getElementById('adminMsg').innerText = "Failed to add/update car.";
+      }
+    }
+
+    // --- Admin List of Cars (Edit, Delete, Sold) ---
+    function renderAdminCarList() {
+      if (!isAdmin) return;
+      let html = "<div style='margin-bottom:10px;font-weight:700;'>All Cars</div>";
+      if (!cars.length) html += "<div>No cars found.</div>";
+      else cars.forEach(car => {
+        const soldLabel = car.sold ? '<span style="color:#e53935;font-weight:700;"> [SOLD]</span>' : '';
+        html += `
+          <div class="admin-car-title">
+            ${car.title} (${car.model}) - <span style="color:#3167e6;">${car.price}</span>${soldLabel}
+            <button onclick="editCar('${car.$id}')">Edit</button>
+            <button onclick="deleteCar('${car.$id}', '${car.image.replace(/'/g,"\\'")}')">Delete</button>
+            ${!car.sold ? `<button onclick="markSold('${car.$id}')">Mark as Sold</button>` : ''}
+          </div>
+        `;
+      });
+      document.getElementById('adminList').innerHTML = html;
+    }
+    function editCar(carId) {
+      const car = cars.find(c => c.$id === carId);
+      if (!car) return;
+      document.getElementById('carTitle').value = car.title;
+      document.getElementById('carModel').value = car.model;
+      document.getElementById('carPrice').value = car.price;
+      document.getElementById('carDesc').value = car.description;
+      document.getElementById('carFeatures').value = Array.isArray(car.features) ? car.features.join(', ') : car.features;
+      document.getElementById('editCarId').value = car.$id;
+    }
+
+    // --- Delete Car ---
+    async function deleteCar(carId, imageUrl) {
+      if (!confirm("Are you sure you want to delete this car?")) return;
+      try {
+        await db.deleteDocument(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, carId);
+        const match = imageUrl.match(/files\/(.*?)\//);
+        if (match && match[1]) {
+          const fileId = match[1];
+          await storage.deleteFile(BUCKET_ID, fileId);
+        }
+        await loadCars();
+        alert("Car deleted.");
+      } catch (e) {
+        alert("Failed to delete car.");
+      }
+    }
+    // --- Mark as Sold ---
+    async function markSold(carId) {
+      try {
+        await db.updateDocument(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, carId, { sold: true });
+        await loadCars();
+      } catch (e) {
+        alert("Failed to mark as sold.");
+      }
+    }
+
+    // --- Bulk Upload (CSV) ---
+    function showBulkUploadModal() {
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="closeModal(event)">
+          <div class="modal" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event)" title="Close">&times;</button>
+            <div class="modal-title">Bulk Upload Cars (CSV)</div>
+            <input type="file" id="bulkFileInput" accept=".csv"/>
+            <button onclick="handleBulkUpload()">Upload</button>
+            <div id="bulkUploadMsg"></div>
+          </div>
+        </div>
+      `;
+      document.body.style.overflow = "hidden";
+    }
+    window.handleBulkUpload = async function() {
+      const fileInput = document.getElementById('bulkFileInput');
+      if (!fileInput.files[0]) return;
+      Papa.parse(fileInput.files[0], {
+        header: true,
+        complete: async function(results) {
+          for (const row of results.data) {
+            if (!row.title || !row.model || !row.price || !row.description || !row.image) continue;
+            await db.createDocument(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, Appwrite.ID.unique(), {
+              title: row.title, model: row.model, price: row.price, description: row.description, image: row.image, features: row.features ? row.features.split(',') : [], sold: false
+            });
+          }
+          document.getElementById('bulkUploadMsg').innerText = "Bulk upload complete!";
+          await loadCars();
+        }
+      });
+    }
+
+    // --- Close Modal ---
+    function closeModal(e) {
+      document.getElementById('modal-root').innerHTML = "";
+      document.body.style.overflow = "";
+      if (window.location.hash.startsWith("#car-")) window.location.hash = "";
+    }
+
+    // --- On Load: check session ---
+    (async function(){
+      try {
+        const session = await account.get();
+        if (session && ADMIN_EMAILS.includes(session.email)) {
+          isAdmin = true;
+          document.getElementById('adminPanel').classList.add('active');
+        }
+      } catch {}
+      loadCars();
+      // Restore car detail if hash present
+      if (window.location.hash.startsWith("#car-")) {
+        const carId = window.location.hash.replace("#car-", "");
+        setTimeout(() => showCarModal(carId), 500);
+      }
+    })();
   </script>
 </body>
 </html>
