@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Car Gallery - Modern Car Dealership</title>
+  <title>Chidoxic Auto Mobile Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <!-- Google Fonts for modern look -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -32,6 +32,17 @@
       letter-spacing: 1.5px;
       font-weight: 800;
       text-shadow: 0 2px 6px rgba(49,103,230,0.09);
+      display: flex;
+      align-items: center;
+    }
+    .logo {
+      width: 38px;
+      height: 38px;
+      margin-right: 12px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #fff;
+      border: 2px solid #3167e6;
     }
     .appbar-btns button {
       margin-left: 14px;
@@ -300,6 +311,38 @@
     .modal-action button { background: #3167e6; color: #fff; border: none; font-size: 1.09rem; font-weight: 700; padding: 10px 27px; border-radius: 7px; cursor: pointer; transition: background .2s, transform .14s; margin:0; }
     .modal-action button:hover { background: #26314a; }
 
+    /* Admin Panel Styles */
+    .admin-panel {
+      width: 100%;
+      max-width: 540px;
+      margin: 40px auto 0 auto;
+      padding: 32px 28px 28px 28px;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 4px 18px rgba(49,103,230,0.07);
+      display: none;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .admin-panel.active { display: flex; }
+    .admin-title { font-weight: 800; font-size: 1.3rem; margin-bottom: 12px; color: #3167e6;}
+    .admin-form label { font-weight: 600; display: block; margin-top: 8px; }
+    .admin-form input, .admin-form textarea {
+      width: 100%; padding: 8px 10px; font-size: 1rem; border-radius: 6px; border: 1px solid #c7d1eb; margin-top: 3px;
+    }
+    .admin-form textarea { min-height: 54px; }
+    .admin-form .admin-row { margin-bottom: 11px; }
+    .admin-form button {
+      background: #3167e6; color: #fff; font-weight: 700; padding: 10px 22px; border: none; border-radius: 6px; cursor: pointer;
+      transition: background .17s;
+    }
+    .admin-form button:hover { background: #1a2233;}
+    .admin-logout { margin-top: 12px; color: #e53935; background: none; border: none; cursor: pointer; font-weight: 700;}
+    .admin-list { margin-top: 28px;}
+    .admin-car-title { font-weight: 700; }
+    .admin-msg { color: #e53935; margin-bottom: 7px; font-size: .98rem;}
+    .hidden {display:none;}
+
     @media (max-width: 900px) {
       .hero { flex-direction: column; gap: 16px; padding: 32px 12px; }
       .hero-img { text-align: center;}
@@ -316,14 +359,20 @@
       .modal-title { font-size: 1.2rem;}
     }
   </style>
+  <!-- Appwrite SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
 </head>
 <body>
   <nav class="appbar">
-    <span class="appbar-title">Car Gallery</span>
+    <span class="appbar-title">
+      <img src="https://i.ibb.co/4W2DGKm/car-logo.png" class="logo" alt="Chidoxic Logo"/>
+      Chidoxic Auto Mobile Center
+    </span>
     <span class="appbar-btns">
       <button onclick="scrollToSection('gallery')">Browse Cars</button>
       <button onclick="showAbout()">About</button>
       <button onclick="showContact()">Contact</button>
+      <button id="adminBtn" onclick="toggleAdminPanel()">Admin</button>
     </span>
   </nav>
   <main class="main">
@@ -331,7 +380,7 @@
       <div class="hero-content">
         <div class="hero-title">Find Your Dream Car</div>
         <div class="hero-desc">
-          Explore a curated selection of the latest and greatest cars. <br>
+          Explore a curated selection of the latest and greatest cars.<br>
           Modern UI. Smooth transitions. Details that matter.<br>
           <b>Discover your next ride today!</b>
         </div>
@@ -343,111 +392,79 @@
     </section>
     <!-- Car Cards Section -->
     <section class="car-list" id="gallery"></section>
+    <!-- Admin Panel -->
+    <section class="admin-panel" id="adminPanel">
+      <div class="admin-title">Admin Panel</div>
+      <form class="admin-form" id="adminForm">
+        <div class="admin-msg" id="adminMsg"></div>
+        <div class="admin-row">
+          <label for="carTitle">Title</label>
+          <input type="text" id="carTitle" required>
+        </div>
+        <div class="admin-row">
+          <label for="carModel">Model Year</label>
+          <input type="text" id="carModel" required>
+        </div>
+        <div class="admin-row">
+          <label for="carPrice">Price</label>
+          <input type="text" id="carPrice" required>
+        </div>
+        <div class="admin-row">
+          <label for="carDesc">Description</label>
+          <textarea id="carDesc" required></textarea>
+        </div>
+        <div class="admin-row">
+          <label for="carImage">Image URL</label>
+          <input type="text" id="carImage" required>
+        </div>
+        <div class="admin-row">
+          <label for="carFeatures">Features (comma separated)</label>
+          <input type="text" id="carFeatures" required>
+        </div>
+        <button type="submit">Add Car</button>
+      </form>
+      <button class="admin-logout" id="adminLogout" onclick="logoutAdmin()">Logout</button>
+      <div class="admin-list" id="adminList"></div>
+    </section>
   </main>
   <!-- Modal -->
   <div id="modal-root"></div>
   <script>
-    // --- Data for Cars ---
-    const cars = [
-      {
-        id: 1,
-        title: "Tesla Model S Plaid",
-        model: "2024",
-        price: "$124,990",
-        description: "The Tesla Model S Plaid is the ultimate blend of speed, technology, and sustainability. 0-60mph in under 2 seconds, premium interior, and cutting-edge autopilot.",
-        image: "https://tesla-cdn.thron.com/delivery/public/image/tesla/275e7e84-28d1-4724-bb56-4c9a4f2f5a1e/bvlatuR/std/1200x628/ms-main-hero-desktop",
-        features: ["Electric", "Autopilot", "1,020 hp", "Range: 390mi", "AWD"],
-      },
-      {
-        id: 2,
-        title: "BMW M4 Competition",
-        model: "2023",
-        price: "$78,800",
-        description: "A performance coupe with a 503hp turbo inline-6, track-ready handling, and a luxurious cockpit. Perfect for enthusiasts who want both power and comfort.",
-        image: "https://www.bmwusa.com/content/dam/bmwusa/M/M4/2023/Overview/BMW-MY23-G82-M4-Comp-xDrive-Overview-01-desktop.jpg",
-        features: ["503 hp", "Turbocharged", "0-60mph: 3.8s", "RWD/AWD", "Luxury"],
-      },
-      {
-        id: 3,
-        title: "Toyota Camry Hybrid",
-        model: "2024",
-        price: "$29,900",
-        description: "Efficient, reliable, and stylish. The Camry Hybrid offers outstanding fuel economy and a comfortable drive, making it the perfect daily commuter.",
-        image: "https://www.toyota.com/imgix/content/dam/toyota/jellies/max/2024/camry/2024-camry-gallery-001-full_tcm-3159-2443100.jpg",
-        features: ["Hybrid", "53 MPG", "5 Seats", "Safety Sense", "FWD"],
-      },
-      {
-        id: 4,
-        title: "Porsche Taycan Turbo",
-        model: "2024",
-        price: "$153,300",
-        description: "The all-electric Porsche Taycan Turbo delivers pulse-quickening acceleration, luxury, and innovative tech. Experience pure driving thrill in silence.",
-        image: "https://files.porsche.com/filestore/image/multimedia/none/992-taycan-modelimage-sideshot/model/8431f9d7-8b51-11ea-80c9-005056bbdc38;sS;twebp/porsche-model.png",
-        features: ["Electric", "670 hp", "0-60mph: 3.0s", "AWD", "Luxury Interior"],
-      },
-      {
-        id: 5,
-        title: "Ford Mustang GT",
-        model: "2024",
-        price: "$44,090",
-        description: "A true American icon. The Mustang GT comes with a 5.0L V8, aggressive styling, and a driving experience that thrills on every road.",
-        image: "https://www.ford.com/is/image/Ford/2024-mustang-gt-premium-fastback-shadow-black-hero-01?wid=900&hei=596",
-        features: ["V8 Engine", "450 hp", "Manual/Auto", "RWD", "Classic"],
-      },
-      {
-        id: 6,
-        title: "Honda Civic Type R",
-        model: "2024",
-        price: "$44,795",
-        description: "The king of hot hatches. Turbocharged engine, track-tuned suspension, and bold styling. It's as fun to drive as it looks.",
-        image: "https://automobiles.honda.com/-/media/Honda-Automobiles/Vehicles/2024/Civic-Type-R/Global-Assets/2024-civic-type-r-gal-01.jpg",
-        features: ["Turbo", "6-Speed Manual", "FWD", "Sport Seats", "305 hp"],
-      },
-      {
-        id: 7,
-        title: "Mercedes-Benz GLE 450",
-        model: "2024",
-        price: "$66,450",
-        description: "A luxury SUV with a turbocharged inline-6, plush interior, advanced tech, and roomy seating for 5 adults. Where comfort meets performance.",
-        image: "https://www.mbusa.com/content/dam/mb-nafta/us/myco/my22/gle/suv/gle450w4/2022-GLE450-SUV-AVP-DR.png",
-        features: ["Turbo", "AWD", "Luxury", "5 Seats", "Mild Hybrid"],
-      },
-      {
-        id: 8,
-        title: "Mazda MX-5 Miata",
-        model: "2024",
-        price: "$28,985",
-        description: "Pure driving joy. Lightweight, rear-wheel drive, and a manual gearbox. The Miata is an ode to the roadster spirit.",
-        image: "https://www.mazdausa.com/siteassets/vehicles/2024/mx-5-miata/gallery/2024-mazda-mx-5-miata-roadster-gallery-01.jpg",
-        features: ["Manual", "Convertible", "RWD", "Lightweight", "181 hp"],
-      },
-      {
-        id: 9,
-        title: "Audi Q5",
-        model: "2024",
-        price: "$45,300",
-        description: "The Audi Q5 combines luxury, practicality, and technology. Quattro AWD, a comfortable interior, and a suite of smart features.",
-        image: "https://www.audiusa.com/content/dam/nemo/us/models/q5/my-2024/overview/2024-q5-hero.jpg",
-        features: ["AWD", "Turbo", "Luxury", "5 Seats", "Virtual Cockpit"],
-      },
-      {
-        id: 10,
-        title: "Hyundai Ioniq 5",
-        model: "2024",
-        price: "$41,800",
-        description: "A futuristic electric crossover with ultra-fast charging, high-tech interior, and striking style. Award-winning innovation for the modern driver.",
-        image: "https://www.hyundaiusa.com/images/vehicles/2024/ioniq5/gallery-hero-1.jpg",
-        features: ["Electric", "RWD/AWD", "Ultra-Fast Charging", "Technology", "300mi Range"],
+    // --- Appwrite Config ---
+    const APPWRITE_ENDPOINT = "https://[YOUR_APPWRITE_ENDPOINT]/v1";
+    const APPWRITE_PROJECT = "[YOUR_PROJECT_ID]";
+    const APPWRITE_DB_ID = "[YOUR_DATABASE_ID]";
+    const APPWRITE_COLLECTION_ID = "[YOUR_CARS_COLLECTION_ID]";
+    const ADMIN_EMAILS = ["admin1@email.com", "supremealpha04@gmail.com", "admin3@email.com"]; // Replace with your admin emails
+
+    const client = new Appwrite.Client();
+    client.setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT);
+    const account = new Appwrite.Account(client);
+    const db = new Appwrite.Databases(client);
+
+    // --- UI State ---
+    let cars = [];
+    let isAdmin = false;
+
+    // --- Load Cars from Appwrite ---
+    async function loadCars() {
+      try {
+        const res = await db.listDocuments(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, [Appwrite.Query.orderDesc("$createdAt")]);
+        cars = res.documents;
+        renderCars();
+        renderAdminCarList();
+      } catch (e) {
+        document.getElementById('gallery').innerHTML = "<div style='color:#e53935;font-weight:700;'>Failed to load cars.</div>";
       }
-    ];
+    }
 
     // --- Render Car Cards ---
     function renderCars() {
       const gallery = document.getElementById('gallery');
       gallery.innerHTML = "";
       cars.forEach((car, idx) => {
-        // Animation delay for card stagger
         const delay = 0.08 * idx;
+        const features = car.features ? (Array.isArray(car.features) ? car.features : car.features.split(',')) : [];
         const card = document.createElement('div');
         card.className = "car-card";
         card.style.animationDelay = delay + 's';
@@ -457,10 +474,10 @@
             <div class="car-title">${car.title}</div>
             <div class="car-model">${car.model}</div>
             <div class="car-desc">${car.description.slice(0, 84)}...</div>
-            <div class="car-features">${car.features.map(f => `<span>${f}</span>`).join('')}</div>
+            <div class="car-features">${features.map(f => `<span>${f.trim()}</span>`).join('')}</div>
             <div class="car-price">${car.price}</div>
             <div class="car-action">
-              <button onclick="showCarModal(${car.id})">View Details</button>
+              <button onclick="showCarModal('${car.$id}')">View Details</button>
             </div>
           </div>
         `;
@@ -470,8 +487,9 @@
 
     // --- Modal Logic ---
     function showCarModal(id) {
-      const car = cars.find(c => c.id === id);
+      const car = cars.find(c => c.$id === id);
       if (!car) return;
+      const features = car.features ? (Array.isArray(car.features) ? car.features : car.features.split(',')) : [];
       const modalRoot = document.getElementById('modal-root');
       modalRoot.innerHTML = `
         <div class="modal-backdrop" onclick="closeModal(event)">
@@ -481,7 +499,7 @@
             <div class="modal-title">${car.title}</div>
             <div class="modal-model">Model Year: ${car.model}</div>
             <div class="modal-price">Price: ${car.price}</div>
-            <div class="modal-features">${car.features.map(f => `<span>${f}</span>`).join(' ')}</div>
+            <div class="modal-features">${features.map(f => `<span>${f.trim()}</span>`).join(' ')}</div>
             <div class="modal-desc">${car.description}</div>
             <div class="modal-action">
               <button onclick="closeModal(event)">Close</button>
@@ -508,13 +526,13 @@
         <div class="modal-backdrop" onclick="closeModal(event)">
           <div class="modal" onclick="event.stopPropagation()">
             <button class="modal-close" onclick="closeModal(event)">&times;</button>
-            <div class="modal-title">About Car Gallery</div>
+            <div class="modal-title">About Chidoxic Auto Mobile Center</div>
             <div class="modal-desc" style="margin-bottom:18px;">
-              <b>Car Gallery</b> is a modern, animated, and responsive car dealership showcase. Browse a handpicked selection of the world's best cars, each presented with smooth UI transitions and interactive modals.<br><br>
+              <b>Chidoxic Auto Mobile Center</b> is a modern, animated, and responsive car dealership showcase. Browse a handpicked selection of the world's best cars, each presented with smooth UI transitions and info straight from the cloud database.
               <ul style="padding-left:20px; margin:0;">
                 <li>Modern, clean design with smooth animations and transitions</li>
                 <li>Detailed car info including price, model, features, and high-res images</li>
-                <li>Fully static & blazing fast – no backend required</li>
+                <li>Powered by Appwrite backend</li>
                 <li>Responsive and works on all devices</li>
               </ul>
             </div>
@@ -532,7 +550,7 @@
             <div class="modal-title">Contact Us</div>
             <div class="modal-desc" style="margin-bottom:16px;">
               <b>Looking for a car or need more details?</b> <br>
-              Email: <a href="mailto:info@cargallery.com" style="color:#3167e6;">info@cargallery.com</a><br>
+              Email: <a href="mailto:info@chidoxicauto.com" style="color:#3167e6;">info@chidoxicauto.com</a><br>
               Phone: <a href="tel:+1234567890" style="color:#3167e6;">+1 (234) 567-890</a><br>
               Location: 123 Dream Cars Blvd, Auto City, USA
             </div>
@@ -543,8 +561,101 @@
       document.body.style.overflow = "hidden";
     }
 
-    // --- Run on Load ---
-    renderCars();
+    // --- Admin Panel Logic ---
+    function toggleAdminPanel() {
+      if (isAdmin) {
+        document.getElementById('adminPanel').classList.toggle('active');
+      } else {
+        showAdminLogin();
+      }
+    }
+    function showAdminLogin() {
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="closeModal(event)">
+          <div class="modal" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event)">&times;</button>
+            <div class="modal-title">Admin Login</div>
+            <form id="adminLoginForm" style="margin-top:17px;">
+              <label>Email</label>
+              <input type="email" id="adminEmail" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #c7d1eb;">
+              <label style="margin-top:8px;">Password</label>
+              <input type="password" id="adminPassword" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #c7d1eb;">
+              <button style="margin-top:14px;width:100%;background:#3167e6;color:#fff;padding:10px;border:none;border-radius:6px;font-weight:700;cursor:pointer;">Login</button>
+              <div id="loginMsg" style="color:#e53935;margin-top:8px;"></div>
+            </form>
+          </div>
+        </div>
+      `;
+      document.body.style.overflow = "hidden";
+      document.getElementById('adminLoginForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const email = document.getElementById('adminEmail').value.trim();
+        const password = document.getElementById('adminPassword').value;
+        if (!ADMIN_EMAILS.includes(email)) {
+          document.getElementById('loginMsg').innerText = "Not authorized.";
+          return;
+        }
+        try {
+          await account.createEmailSession(email, password);
+          isAdmin = true;
+          closeModal();
+          document.getElementById('adminPanel').classList.add('active');
+        } catch (err) {
+          document.getElementById('loginMsg').innerText = "Login failed. Check email and password.";
+        }
+      }
+    }
+    async function logoutAdmin() {
+      try { await account.deleteSession('current'); } catch {}
+      isAdmin = false;
+      document.getElementById('adminPanel').classList.remove('active');
+    }
+
+    // --- Admin Add Car Logic ---
+    document.getElementById('adminForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const title = document.getElementById('carTitle').value.trim();
+      const model = document.getElementById('carModel').value.trim();
+      const price = document.getElementById('carPrice').value.trim();
+      const description = document.getElementById('carDesc').value.trim();
+      const image = document.getElementById('carImage').value.trim();
+      const features = document.getElementById('carFeatures').value.trim().split(',').map(f=>f.trim());
+      if (!title || !model || !price || !description || !image || !features.length) {
+        document.getElementById('adminMsg').innerText = "All fields are required.";
+        return;
+      }
+      try {
+        await db.createDocument(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, Appwrite.ID.unique(), { title, model, price, description, image, features });
+        document.getElementById('adminMsg').innerText = "Car added successfully!";
+        loadCars();
+        this.reset();
+      } catch {
+        document.getElementById('adminMsg').innerText = "Failed to add car.";
+      }
+    }
+
+    // --- Admin List of Cars (simple) ---
+    function renderAdminCarList() {
+      if (!isAdmin) return;
+      let html = "<div style='margin-bottom:10px;font-weight:700;'>All Cars</div>";
+      if (!cars.length) html += "<div>No cars found.</div>";
+      else cars.forEach(car => {
+        html += `<div class="admin-car-title">${car.title} (${car.model}) - <span style="color:#3167e6;">${car.price}</span></div>`;
+      });
+      document.getElementById('adminList').innerHTML = html;
+    }
+
+    // --- On Load: check session ---
+    (async function(){
+      try {
+        const session = await account.get();
+        if (session && ADMIN_EMAILS.includes(session.email)) {
+          isAdmin = true;
+          document.getElementById('adminPanel').classList.add('active');
+        }
+      } catch {}
+      loadCars();
+    })();
   </script>
 </body>
 </html>
