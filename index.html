@@ -395,7 +395,7 @@
     <!-- Admin Panel -->
     <section class="admin-panel" id="adminPanel">
       <div class="admin-title">Admin Panel</div>
-      <form class="admin-form" id="adminForm">
+      <form class="admin-form" id="adminForm" enctype="multipart/form-data">
         <div class="admin-msg" id="adminMsg"></div>
         <div class="admin-row">
           <label for="carTitle">Title</label>
@@ -414,8 +414,8 @@
           <textarea id="carDesc" required></textarea>
         </div>
         <div class="admin-row">
-          <label for="carImage">Image URL</label>
-          <input type="text" id="carImage" required>
+          <label for="carImageFile">Car Image</label>
+          <input type="file" id="carImageFile" accept="image/*" required>
         </div>
         <div class="admin-row">
           <label for="carFeatures">Features (comma separated)</label>
@@ -435,12 +435,14 @@
     const APPWRITE_PROJECT = "684c13530011df315968";
     const APPWRITE_DB_ID = "684c1377001ab5d7cbc9";
     const APPWRITE_COLLECTION_ID = "684c138c000f8065661f";
+    const BUCKET_ID = "684c2916001d475351b8";
     const ADMIN_EMAILS = ["supremeamerapplications@gmail.com", "supremealpha04@gmail.com", "supremealpha04@gmail.com"]; // Replace with your admin emails
 
     const client = new Appwrite.Client();
     client.setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT);
     const account = new Appwrite.Account(client);
     const db = new Appwrite.Databases(client);
+    const storage = new Appwrite.Storage(client);
 
     // --- UI State ---
     let cars = [];
@@ -600,6 +602,7 @@
           isAdmin = true;
           closeModal();
           document.getElementById('adminPanel').classList.add('active');
+          renderAdminCarList(); // update admin list after login
         } catch (err) {
           document.getElementById('loginMsg').innerText = "Login failed. Check email and password.";
         }
@@ -611,25 +614,38 @@
       document.getElementById('adminPanel').classList.remove('active');
     }
 
-    // --- Admin Add Car Logic ---
+    // --- Admin Add Car Logic with File Upload ---
     document.getElementById('adminForm').onsubmit = async function(e) {
       e.preventDefault();
       const title = document.getElementById('carTitle').value.trim();
       const model = document.getElementById('carModel').value.trim();
       const price = document.getElementById('carPrice').value.trim();
       const description = document.getElementById('carDesc').value.trim();
-      const image = document.getElementById('carImage').value.trim();
-      const features = document.getElementById('carFeatures').value.trim().split(',').map(f=>f.trim());
-      if (!title || !model || !price || !description || !image || !features.length) {
+      const features = document.getElementById('carFeatures').value.trim().split(',').map(f=>f.trim()).filter(f=>f);
+      const imageFileInput = document.getElementById('carImageFile');
+      const imageFile = imageFileInput.files[0];
+
+      if (!title || !model || !price || !description || !imageFile || !features.length) {
         document.getElementById('adminMsg').innerText = "All fields are required.";
         return;
       }
+
       try {
-        await db.createDocument(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, Appwrite.ID.unique(), { title, model, price, description, image, features });
+        // Upload image to Appwrite Storage
+        const uploadRes = await storage.createFile(BUCKET_ID, Appwrite.ID.unique(), imageFile);
+        const imageFileId = uploadRes.$id;
+        // Construct public URL for the image
+        const imageUrl = `${APPWRITE_ENDPOINT}/storage/buckets/${BUCKET_ID}/files/${imageFileId}/view?project=${APPWRITE_PROJECT}`;
+
+        // Create car document with image URL
+        await db.createDocument(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, Appwrite.ID.unique(), {
+          title, model, price, description, image: imageUrl, features
+        });
+
         document.getElementById('adminMsg').innerText = "Car added successfully!";
-        loadCars();
+        await loadCars(); // ensure cars are re-fetched and admin list is refreshed
         this.reset();
-      } catch {
+      } catch (err) {
         document.getElementById('adminMsg').innerText = "Failed to add car.";
       }
     }
