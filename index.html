@@ -103,7 +103,6 @@
       .admin-panel {width:98vw;}
       .admin-form input, .admin-form textarea { font-size:1.05rem; padding:12px;}
       .bulk-upload-btn { width:100%; }
-    
     }
   </style>
 </head>
@@ -174,20 +173,18 @@
   </main>
   <div id="modal-root"></div>
   <script>
-    // --- Appwrite Config ---
+    // ---- Appwrite config ----
     const APPWRITE_ENDPOINT = "https://fra.cloud.appwrite.io/v1";
     const APPWRITE_PROJECT = "684c13530011df315968";
     const APPWRITE_DB_ID = "684c1377001ab5d7cbc9";
     const APPWRITE_COLLECTION_ID = "684c138c000f8065661f";
     const BUCKET_ID = "684c2916001d475351b8";
     const ADMIN_EMAILS = ["supremeamerapplications@gmail.com", "supremealpha04@gmail.com"];
-
     const client = new Appwrite.Client();
     client.setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT);
     const account = new Appwrite.Account(client);
     const db = new Appwrite.Databases(client);
     const storage = new Appwrite.Storage(client);
-
     let cars = [];
     let isAdmin = false;
 
@@ -208,7 +205,7 @@
       cars.forEach((car, idx) => {
         const features = car.features ? (Array.isArray(car.features) ? car.features : car.features.split(',')) : [];
         const soldBadge = car.sold ? ' <span style="color:#e53935;font-size:1rem;">[SOLD]</span>' : '';
-        const images = car.images && car.images.length ? car.images : (car.image ? [car.image] : []);
+        const images = car.images && car.images.length ? car.images : [];
         let imgHtml = "";
         if (images[0] && images[0].endsWith(".pdf")) {
           imgHtml = `<a href="${images[0]}" target="_blank" style="color:#3167e6;font-weight:600;">View PDF</a>`;
@@ -239,7 +236,7 @@
       if (!car) return;
       const features = car.features ? (Array.isArray(car.features) ? car.features : car.features.split(',')) : [];
       const soldBadge = car.sold ? ' <span style="color:#e53935;font-size:1rem;">[SOLD]</span>' : '';
-      const images = car.images && car.images.length ? car.images : (car.image ? [car.image] : []);
+      const images = car.images && car.images.length ? car.images : [];
       let galleryHtml = images.length > 1
         ? `<div class="modal-gallery">${images.map((img, i) =>
           img.endsWith('.pdf')
@@ -520,7 +517,7 @@
           <div class="admin-car-title">
             ${car.title} (${car.model}) - <span style="color:#3167e6;">${car.price}</span>${soldLabel}
             <button onclick="editCar('${car.$id}')">Edit</button>
-            <button onclick="deleteCar('${car.$id}', '${(car.images && car.images[0] ? car.images[0] : car.image || "").replace(/'/g,"\\'")}')">Delete</button>
+            <button onclick="deleteCar('${car.$id}', '${(car.images && car.images[0] ? car.images[0] : "").replace(/'/g,"\\'")}')">Delete</button>
             ${!car.sold ? `<button onclick="markSold('${car.$id}')">Mark as Sold</button>` : ''}
           </div>
         `;
@@ -595,10 +592,9 @@
         complete: async function(results) {
           let count = 0;
           for (const row of results.data) {
-            if (!row.title || !row.model || !row.price || !row.description || !(row.images || row.image)) continue;
+            if (!row.title || !row.model || !row.price || !row.description || !row.images) continue;
             let imagesArr = [];
-            const imagesField = row.images || row.image;
-            const fileNames = imagesField.split('|').map(f=>f.trim()).slice(0, 4);
+            const fileNames = row.images.split('|').map(f=>f.trim()).slice(0, 4);
             for (const filename of fileNames) {
               let imageUrl = filename;
               if (imagesMap[filename]) {
