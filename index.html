@@ -778,6 +778,7 @@
       document.getElementById('adminPanel').classList.remove('active');
     }
 
+    // --- Admin Add Car Logic with sold ---
     document.getElementById('adminForm').onsubmit = async function(e) {
       e.preventDefault();
       const title = document.getElementById('carTitle').value.trim();
@@ -806,7 +807,15 @@
           APPWRITE_DB_ID,
           APPWRITE_COLLECTION_ID,
           Appwrite.ID.unique(),
-          { title, model, price, description, features, media: mediaArr }
+          {
+            title,
+            model,
+            price,
+            description,
+            features,
+            media: mediaArr,
+            sold: false // <-- ADDED: This fixes the "Missing required attribute 'sold'" error!
+          }
         );
         document.getElementById('adminMsg').innerText = "Car added successfully!";
         selectedFiles = [];
