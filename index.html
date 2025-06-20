@@ -118,7 +118,6 @@
       align-items: center;
       animation: fadein .7s cubic-bezier(.5, .1, .7, 1) 1;
     }
-    /* Hero Section */
     .hero {
       width: 100%;
       background: linear-gradient(90deg, #e3ebff 70%, #f7f8fa 100%);
@@ -187,8 +186,6 @@
     }
     @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
     @keyframes slideDown { from { opacity: 0; transform: translateY(-32px);} to { opacity: 1; transform: translateY(0);} }
-
-    /* Car cards grid */
     .car-list {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
@@ -311,7 +308,6 @@
       background: var(--color-button-hover);
       transform: scale(1.06);
     }
-    /* Car Modal Animation */
     .modal-backdrop {
       position: fixed;
       left: 0; top: 0;
@@ -367,7 +363,6 @@
     .modal-action { text-align: right; }
     .modal-action button { background: var(--color-button); color: #fff; border: none; font-size: 1.09rem; font-weight: 700; padding: 10px 27px; border-radius: 7px; cursor: pointer; transition: background .2s, transform .14s; margin:0; }
     .modal-action button:hover { background: var(--color-button-hover); }
-
     .drag-drop-zone {
       border: 2px dashed var(--color-drag-border);
       background: var(--color-drag-bg);
@@ -392,7 +387,6 @@
       background: #e53935; color: #fff; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 1rem;
       cursor: pointer; position: absolute; top: -6px; right: -6px; line-height: 17px; padding: 0;
     }
-
     .admin-panel {
       width: 100%;
       max-width: 540px;
@@ -473,7 +467,6 @@
       </div>
     </section>
     <section class="car-list" id="gallery"></section>
-    <!-- Admin Panel -->
     <section class="admin-panel" id="adminPanel">
       <div class="admin-title">Admin Panel</div>
       <form class="admin-form" id="adminForm" autocomplete="off">
@@ -535,7 +528,6 @@
       localStorage.setItem('theme', theme);
       document.getElementById("themeToggle").innerText = theme === "dark" ? "☀️" : "🌙";
     }
-    // Initial theme
     (function(){
       const saved = localStorage.getItem('theme');
       const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -607,11 +599,19 @@
     async function loadCars() {
       try {
         const res = await db.listDocuments(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, [Appwrite.Query.orderDesc("$createdAt")]);
-        cars = res.documents;
+        cars = res.documents.map(car => ({
+          ...car,
+          media: Array.isArray(car.media)
+            ? car.media.map(str => {
+                try { return JSON.parse(str); } catch { return null; }
+              }).filter(Boolean)
+            : []
+        }));
         renderCars();
         renderAdminCarList();
       } catch (e) {
         document.getElementById('gallery').innerHTML = "<div style='color:#e53935;font-weight:700;'>Failed to load cars.</div>";
+        console.error("Loading cars error:", e);
       }
     }
 
@@ -620,7 +620,6 @@
       gallery.innerHTML = "";
       cars.forEach((car, idx) => {
         const delay = 0.08 * idx;
-        // Use first image or video as cover
         let cover = "";
         if (car.media && Array.isArray(car.media) && car.media.length) {
           const first = car.media.find(m => m.type === "image") || car.media[0];
@@ -779,7 +778,6 @@
       document.getElementById('adminPanel').classList.remove('active');
     }
 
-    // --- Admin Add Car Logic ---
     document.getElementById('adminForm').onsubmit = async function(e) {
       e.preventDefault();
       const title = document.getElementById('carTitle').value.trim();
@@ -802,7 +800,7 @@
           let uploadRes = await storage.createFile(APPWRITE_BUCKET_ID, Appwrite.ID.unique(), file);
           let url = storage.getFilePreview(APPWRITE_BUCKET_ID, uploadRes.$id).href;
           let type = file.type.startsWith('image/') ? 'image' : (file.type.startsWith('video/') ? 'video' : 'other');
-          mediaArr.push({ url, type, name: file.name });
+          mediaArr.push(JSON.stringify({ url, type, name: file.name }));
         }
         await db.createDocument(
           APPWRITE_DB_ID,
@@ -817,6 +815,7 @@
         this.reset();
       } catch (err) {
         document.getElementById('adminMsg').innerText = "Failed to add car.";
+        console.error(err);
       }
     }
 
