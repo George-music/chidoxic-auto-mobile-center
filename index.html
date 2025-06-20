@@ -2,117 +2,458 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Chidix Auto Enterprise</title>
+  <title>Chidoxic Auto Mobile Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
   <style>
-    html, body { margin:0; padding:0; font-family:'Inter',sans-serif; background:#f7f8fa; color:#1a2233; min-height:100vh;}
-    .appbar { background:linear-gradient(90deg,#3167e6 50%,#1a2233 100%); color:#fff; padding:0 24px; height:62px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 10px rgba(49,103,230,0.08); font-weight:600; position:sticky; top:0; z-index:10;}
-    .appbar-title { font-size:2rem; letter-spacing:1.5px; font-weight:800; display:flex; align-items:center;}
-    .logo { width:38px; height:38px; margin-right:12px; border-radius:50%; object-fit:cover; background:#fff; border:2px solid #3167e6;}
-    .appbar-btns { display: flex; flex-wrap: wrap; gap: 8px;}
-    .appbar-btns button { margin-left:14px; background:rgba(255,255,255,0.10); border:none; color:#fff; font-size:1.07rem; padding:9px 18px; border-radius:6px; cursor:pointer; font-weight:600; transition:background .25s,transform .13s; outline:none;}
-    .appbar-btns button:hover { background:#fff; color:#3167e6; transform:translateY(-2px) scale(1.05);}
-    .main { max-width:1180px; margin:40px auto 32px auto; padding:0 14px; display:flex; flex-direction:column; align-items:center;}
-    .hero { width:100%; background:linear-gradient(90deg,#e3ebff 70%,#f7f8fa 100%); border-radius:14px; display:flex; gap:48px; align-items:center; justify-content:space-between; padding:40px 36px 38px 36px; margin-bottom:30px;}
-    .hero-content { flex:1 1 350px;}
-    .hero-title { font-size:2.4rem; color:#3167e6; font-weight:800; margin-bottom:8px; line-height:1.18;}
-    .hero-desc { font-size:1.14rem; color:#26314a; margin-bottom:16px; font-weight:500; line-height:1.5;}
-    .hero-action { background:#3167e6; color:#fff; font-weight:700; font-size:1.07rem; border:none; padding:12px 28px; border-radius:6px; box-shadow:0 4px 14px rgba(49,103,230,0.13); cursor:pointer;}
-    .hero-action:hover { background:#1a2233; color:#fff;}
-    .hero-img { flex:0 0 340px; min-width:200px; text-align:right;}
-    .hero-img img { width:320px; max-width:100%; border-radius:12px; box-shadow:0 8px 32px 0 rgba(49,103,230,0.13);}
-    .car-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); gap:32px; width:100%; margin-top:8px;}
-    .car-card { background:#fff; border-radius:12px; box-shadow:0 4px 16px rgba(49,103,230,0.04),0 1.5px 7px rgba(26,34,51,0.06); overflow:hidden; transition:box-shadow .25s,transform .15s; display:flex; flex-direction:column;}
-    .car-card:hover { box-shadow:0 12px 32px rgba(49,103,230,0.11),0 3px 12px rgba(26,34,51,0.07); transform:translateY(-7px) scale(1.025);}
-    .car-img { width:100%; height:196px; background:#e3ebff; display:flex; align-items:center; justify-content:center; overflow:hidden;}
-    .car-img img, .car-img video { width:100%; height:100%; object-fit:cover;}
-    .car-img video { background: #18192e; }
-    .car-content { padding:22px 26px 18px 26px; flex:1 1 auto; display:flex; flex-direction:column;}
-    .car-title { font-size:1.28rem; font-weight:700; color:#26314a; margin:0 0 4px 0;}
-    .car-model { font-size:1.07rem; color:#3167e6; font-weight:600; margin-bottom:9px;}
-    .car-desc { color:#444e62; font-size:1.01rem; flex:1 1 auto; margin-bottom:12px; opacity:.82;}
-    .car-price { font-size:1.22rem; font-weight:700; color:#1a2233; margin-bottom:8px;}
-    .car-features { font-size:0.97rem; color:#3167e6; margin-bottom:7px; display:flex; flex-wrap:wrap; gap:8px;}
-    .car-features span { background:#e3ebff; color:#3167e6; font-weight:500; border-radius:5px; padding:2px 10px;}
-    .car-action { margin-top:10px; display:flex; align-items:center; justify-content:flex-end;}
-    .car-action button { background:#3167e6; color:#fff; border:none; font-size:1.02rem; font-weight:700; padding:10px 22px; border-radius:6px; cursor:pointer;}
-    .car-action button:hover { background:#1a2233;}
-    .modal-backdrop { position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(26,34,51,0.18); z-index:999; display:flex; align-items:center; justify-content:center;}
-    .modal { background:#fff; border-radius:14px; min-width:330px; max-width:96vw; max-height:93vh; overflow-y:auto; box-shadow:0 12px 48px 0 rgba(49,103,230,0.16); padding:34px 34px 28px 34px; position:relative;}
-    .modal-close { position:absolute; top:15px; right:18px; font-size:1.5rem; color:#3167e6; background:none; border:none; cursor:pointer; font-weight:800;}
-    .modal-close:hover { color:#e53935; }
-    .modal-main-carousel { display:flex; align-items:center; justify-content:center; gap:12px;}
-    .modal-img, .modal-video { width:100%; max-width:440px; margin:0 auto 24px auto; display:block; border-radius:10px; box-shadow:0 2px 12px rgba(49,103,230,0.13);}
-    .modal-thumb-list {display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 14px;}
-    .modal-thumb { width:60px; height:40px; object-fit:cover; border-radius:6px; border:2px solid #e3ebff; cursor:pointer; background:#fff;}
-    .modal-thumb.active { border:2px solid #3167e6; box-shadow:0 2px 8px rgba(49,103,230,0.12);}
-    .modal-title { font-size:2rem; font-weight:800; margin-bottom:4px; color:#3167e6;}
-    .modal-model { color:#26314a; font-size:1.18rem; font-weight:700; margin-bottom:8px;}
-    .modal-price { font-size:1.33rem; font-weight:700; color:#1a2233; margin-bottom:8px;}
-    .modal-desc { color:#444e62; font-size:1.07rem; margin-bottom:18px;}
-    .modal-features { margin-bottom:10px;}
-    .modal-features span { background:#e3ebff; color:#3167e6; font-weight:500; border-radius:5px; padding:2px 10px;}
-    .modal-action { text-align:right;}
-    .modal-action button { background:#3167e6; color:#fff; border:none; font-size:1.09rem; font-weight:700; padding:10px 27px; border-radius:7px; cursor:pointer;}
-    .modal-action button:hover { background:#26314a;}
-    .drag-drop-zone {
-      border: 2px dashed #3167e6;
-      background: #f0f3fa;
-      padding: 30px 10px;
-      border-radius: 12px;
-      text-align: center;
-      margin-bottom: 18px;
+    :root {
+      --color-bg: #f7f8fa;
+      --color-text: #1a2233;
+      --color-appbar: linear-gradient(90deg, #3167e6 50%, #1a2233 100%);
+      --color-card: #fff;
+      --color-card-shadow: rgba(49,103,230,0.04);
+      --color-button: #3167e6;
+      --color-button-hover: #1a2233;
+      --color-accent: #3167e6;
+      --color-modal-bg: #fff;
+      --color-modal-shadow: rgba(49,103,230,0.16);
+      --color-border: #c7d1eb;
+      --color-drag-bg: #f4f7ff;
+      --color-drag-border: #3167e6;
+      --color-drag-hover: #e3ebff;
+    }
+    [data-theme="dark"] {
+      --color-bg: #181b24;
+      --color-text: #e9eaf1;
+      --color-appbar: linear-gradient(90deg, #18288c 50%, #13141b 100%);
+      --color-card: #23263a;
+      --color-card-shadow: rgba(49,103,230,0.08);
+      --color-button: #2345a9;
+      --color-button-hover: #e9eaf1;
+      --color-accent: #6ca0ff;
+      --color-modal-bg: #24294a;
+      --color-modal-shadow: rgba(49,103,230,0.24);
+      --color-border: #2d3350;
+      --color-drag-bg: #23263a;
+      --color-drag-border: #2345a9;
+      --color-drag-hover: #192c53;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      min-height: 100vh;
+      transition: background .2s,color .2s;
+    }
+    .appbar {
+      background: var(--color-appbar);
+      color: #fff;
+      padding: 0 24px;
+      height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(49,103,230,0.08);
+      font-weight: 600;
+      position: sticky; top: 0; z-index: 10;
+      transition: background .2s;
+    }
+    .appbar-title {
+      font-size: 2rem;
+      letter-spacing: 1.5px;
+      font-weight: 800;
+      text-shadow: 0 2px 6px rgba(49,103,230,0.09);
+      display: flex;
+      align-items: center;
+    }
+    .logo {
+      width: 38px;
+      height: 38px;
+      margin-right: 12px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #fff;
+      border: 2px solid #3167e6;
+    }
+    .appbar-btns button {
+      margin-left: 12px;
+      background: rgba(255,255,255,0.10);
+      border: none;
+      color: #fff;
+      font-size: 1.07rem;
+      padding: 9px 16px;
+      border-radius: 6px;
       cursor: pointer;
-      transition: border-color .18s;
+      font-weight: 600;
+      transition: background .25s, color .25s, transform .13s;
+      outline: none;
+      box-shadow: 0 2px 6px rgba(49,103,230,0.08);
     }
-    .drag-drop-zone.dragover { border-color: #1a2233; background: #e3ebff; }
-    .dragged-preview-list {display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
-    .dragged-preview-list img, .dragged-preview-list video {
-      width: 65px; height: 40px; object-fit: cover; border-radius: 7px; border: 2px solid #e3ebff; background: #fff;
+    .appbar-btns button.theme-toggle {
+      font-size: 1.3rem;
+      padding: 7px 14px;
+      background: transparent;
+      color: #fff;
+      box-shadow: none;
+      margin-left: 6px;
+      border: 1.5px solid #6ca0ff;
     }
-    .remove-preview-btn {position:absolute; top:2px; right:2px; background:#e53935; color:#fff; border:none; border-radius:5px; font-size:.89em; cursor:pointer; padding:2px 5px;}
-    @media (max-width:900px) {
-      .main {padding: 0 4px;}
-      .hero { flex-direction:column; gap:16px; padding:22px 8px;}
-      .hero-img { text-align:center;}
-      .hero-img img { width:210px;}
-      .appbar-btns button { margin-left: 0; margin-right: 7px; margin-bottom: 7px;}
-      .car-list {grid-template-columns:1fr;}
-      .admin-panel {padding: 16px 5px;}
+    .appbar-btns button:hover {
+      background: #fff;
+      color: var(--color-button);
+      transform: translateY(-2px) scale(1.05);
     }
-    @media (max-width:600px) {
-      .main { padding:0 2px;}
-      .car-list {grid-template-columns:1fr;}
-      .car-content { padding:15px 8px 13px 8px;}
-      .hero { padding:12px 1vw;}
-      .hero-title { font-size:1.15rem;}
-      .hero-desc { font-size:1rem;}
-      .hero-img img { width:120px;}
-      .modal { padding:8px 2vw 8px 2vw; min-width:unset;}
-      .modal-title { font-size:1.1rem;}
-      .modal-thumb { width:36px;height:23px;}
-      .modal-img, .modal-video { max-width:100vw; }
-      .appbar { flex-direction: column; height: auto; padding: 2px 5vw 2px 5vw;}
-      .appbar-title { font-size: 1.16rem;}
-      .appbar-btns {flex-wrap: wrap; width: 100%; justify-content: flex-start;}
-      .admin-panel {width:98vw;}
-      .admin-form input, .admin-form textarea { font-size:1.05rem; padding:12px;}
-      .bulk-upload-btn { width:100%; }
+    .appbar-btns button.theme-toggle:hover {
+      background: var(--color-accent);
+      color: #fff;
+    }
+    .main {
+      max-width: 1180px;
+      margin: 40px auto 32px auto;
+      padding: 0 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: fadein .7s cubic-bezier(.5, .1, .7, 1) 1;
+    }
+    /* Hero Section */
+    .hero {
+      width: 100%;
+      background: linear-gradient(90deg, #e3ebff 70%, #f7f8fa 100%);
+      border-radius: 14px;
+      display: flex;
+      gap: 48px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 40px 36px 38px 36px;
+      margin-bottom: 30px;
+      animation: slideDown .7s cubic-bezier(.5, .1, .7, 1);
+    }
+    [data-theme="dark"] .hero {
+      background: linear-gradient(90deg, #222c3f 70%, #23263a 100%);
+    }
+    .hero-content {
+      flex: 1 1 350px;
+    }
+    .hero-title {
+      font-size: 2.4rem;
+      color: var(--color-accent);
+      font-weight: 800;
+      margin-bottom: 8px;
+      line-height: 1.18;
+    }
+    .hero-desc {
+      font-size: 1.14rem;
+      color: var(--color-text);
+      margin-bottom: 16px;
+      font-weight: 500;
+      line-height: 1.5;
+      opacity: .87;
+    }
+    .hero-action {
+      background: var(--color-button);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.07rem;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 6px;
+      box-shadow: 0 4px 14px rgba(49,103,230,0.13);
+      cursor: pointer;
+      transition: background .2s, transform .14s;
+    }
+    .hero-action:hover {
+      background: var(--color-button-hover);
+      color: #fff;
+      transform: scale(1.07);
+    }
+    .hero-img {
+      flex: 0 0 340px;
+      min-width: 200px;
+      text-align: right;
+      animation: floatCar 3s infinite ease-in-out alternate;
+    }
+    .hero-img img {
+      width: 320px;
+      max-width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px 0 rgba(49,103,230,0.13);
+    }
+    @keyframes floatCar {
+      0% { transform: translateY(0);}
+      100% { transform: translateY(18px);}
+    }
+    @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-32px);} to { opacity: 1; transform: translateY(0);} }
+
+    /* Car cards grid */
+    .car-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+      gap: 32px;
+      width: 100%;
+      margin-top: 8px;
+    }
+    .car-card {
+      background: var(--color-card);
+      border-radius: 12px;
+      box-shadow: 0 4px 16px var(--color-card-shadow), 0 1.5px 7px rgba(26,34,51,0.06);
+      overflow: hidden;
+      transition: box-shadow .25s, transform .15s, background .2s;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      animation: fadein .8s cubic-bezier(.5, .1, .7, 1) both;
+    }
+    .car-card:hover {
+      box-shadow: 0 12px 32px rgba(49,103,230,0.11), 0 3px 12px rgba(26,34,51,0.07);
+      transform: translateY(-7px) scale(1.025);
+    }
+    .car-img {
+      width: 100%;
+      height: 196px;
+      background: #e3ebff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+    [data-theme="dark"] .car-img { background: #23263a; }
+    .car-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .7s cubic-bezier(.5,.1,.7,1);
+    }
+    .car-card:hover .car-img img {
+      transform: scale(1.08) rotate(-1.3deg);
+    }
+    .car-content {
+      padding: 22px 26px 18px 26px;
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .car-title {
+      font-size: 1.28rem;
+      font-weight: 700;
+      color: var(--color-text);
+      margin: 0 0 4px 0;
+      letter-spacing: .6px;
+    }
+    .car-model {
+      font-size: 1.07rem;
+      color: var(--color-accent);
+      font-weight: 600;
+      margin-bottom: 9px;
+      letter-spacing: .5px;
+    }
+    .car-desc {
+      color: #444e62;
+      font-size: 1.01rem;
+      flex: 1 1 auto;
+      margin-bottom: 12px;
+      opacity: .82;
+      line-height: 1.5;
+      transition: color .14s;
+    }
+    [data-theme="dark"] .car-desc { color: #b5b8cc; }
+    .car-price {
+      font-size: 1.22rem;
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: 8px;
+      letter-spacing: .3px;
+      transition: color .13s;
+    }
+    .car-features {
+      font-size: 0.97rem;
+      color: var(--color-accent);
+      margin-bottom: 7px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .car-features span {
+      background: #e3ebff;
+      color: var(--color-accent);
+      font-weight: 500;
+      border-radius: 5px;
+      padding: 2px 10px;
+      font-size: 0.97rem;
+      margin-top: 2px;
+      display: inline-block;
+      transition: background .14s;
+    }
+    [data-theme="dark"] .car-features span { background: #23263a; color: #6ca0ff; }
+    .car-action {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .car-action button {
+      background: var(--color-button);
+      color: #fff;
+      border: none;
+      font-size: 1.02rem;
+      font-weight: 700;
+      padding: 10px 22px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background .2s, transform .14s;
+      box-shadow: 0 2px 8px rgba(49,103,230,0.09);
+    }
+    .car-action button:hover {
+      background: var(--color-button-hover);
+      transform: scale(1.06);
+    }
+    /* Car Modal Animation */
+    .modal-backdrop {
+      position: fixed;
+      left: 0; top: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(26,34,51,0.18);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadein .25s;
+    }
+    .modal {
+      background: var(--color-modal-bg);
+      border-radius: 14px;
+      min-width: 330px;
+      max-width: 96vw;
+      max-height: 93vh;
+      overflow-y: auto;
+      box-shadow: 0 12px 48px 0 var(--color-modal-shadow);
+      animation: fadein .26s;
+      padding: 34px 34px 28px 34px;
+      position: relative;
+      color: var(--color-text);
+    }
+    .modal-close {
+      position: absolute; top: 15px; right: 18px;
+      font-size: 1.5rem;
+      color: var(--color-accent);
+      background: none; border: none; cursor: pointer;
+      font-weight: 800;
+      transition: color .17s;
+    }
+    .modal-close:hover { color: #e53935; }
+    .modal-gallery {
+      display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-bottom: 18px;
+    }
+    .modal-gallery img, .modal-gallery video {
+      border-radius: 10px; box-shadow: 0 2px 12px rgba(49,103,230,0.13);
+      max-width: 180px; max-height: 130px; object-fit: cover;
+      background: #e3ebff;
+    }
+    [data-theme="dark"] .modal-gallery img, [data-theme="dark"] .modal-gallery video {
+      background: #23263a;
+    }
+    .modal-title { font-size: 2rem; font-weight: 800; margin-bottom: 4px; color: var(--color-accent); }
+    .modal-model { color: var(--color-text); font-size: 1.18rem; font-weight: 700; margin-bottom: 8px; }
+    .modal-price { font-size: 1.33rem; font-weight: 700; color: var(--color-text); margin-bottom: 8px; }
+    .modal-desc { color: #444e62; font-size: 1.07rem; margin-bottom: 18px; }
+    [data-theme="dark"] .modal-desc { color: #b5b8cc; }
+    .modal-features { margin-bottom: 10px; }
+    .modal-features span { background: #e3ebff; color: var(--color-accent); font-weight: 500; border-radius: 5px; padding: 2px 10px; font-size: 1.01rem; margin-right: 8px; margin-bottom: 5px; display: inline-block;}
+    [data-theme="dark"] .modal-features span { background: #23263a; color: #6ca0ff;}
+    .modal-action { text-align: right; }
+    .modal-action button { background: var(--color-button); color: #fff; border: none; font-size: 1.09rem; font-weight: 700; padding: 10px 27px; border-radius: 7px; cursor: pointer; transition: background .2s, transform .14s; margin:0; }
+    .modal-action button:hover { background: var(--color-button-hover); }
+
+    .drag-drop-zone {
+      border: 2px dashed var(--color-drag-border);
+      background: var(--color-drag-bg);
+      color: var(--color-accent);
+    }
+    .drag-drop-zone.dragover {
+      border-color: #1a2233;
+      background: var(--color-drag-hover);
+    }
+    .file-list-preview {
+      margin: 10px 0 0 0; display: flex; flex-wrap: wrap; gap: 10px;
+    }
+    .file-list-preview img, .file-list-preview video {
+      border-radius: 8px; box-shadow: 0 2px 8px rgba(49,103,230,0.11);
+      max-width: 70px; max-height: 70px; object-fit: cover;
+    }
+    .file-list-preview .file-preview-item {
+      position: relative;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .file-list-preview .remove-btn {
+      background: #e53935; color: #fff; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 1rem;
+      cursor: pointer; position: absolute; top: -6px; right: -6px; line-height: 17px; padding: 0;
+    }
+
+    .admin-panel {
+      width: 100%;
+      max-width: 540px;
+      margin: 40px auto 0 auto;
+      padding: 32px 28px 28px 28px;
+      background: var(--color-card);
+      border-radius: 14px;
+      box-shadow: 0 4px 18px rgba(49,103,230,0.07);
+      display: none;
+      flex-direction: column;
+      gap: 18px;
+      transition: background .2s;
+    }
+    .admin-panel.active { display: flex; }
+    .admin-title { font-weight: 800; font-size: 1.3rem; margin-bottom: 12px; color: var(--color-accent);}
+    .admin-form label { font-weight: 600; display: block; margin-top: 8px; }
+    .admin-form input, .admin-form textarea {
+      width: 100%; padding: 8px 10px; font-size: 1rem; border-radius: 6px; border: 1px solid var(--color-border); margin-top: 3px; background: transparent; color: var(--color-text);
+      transition: background .2s, color .2s;
+    }
+    .admin-form textarea { min-height: 54px; }
+    .admin-form .admin-row { margin-bottom: 11px; }
+    .admin-form button {
+      background: var(--color-button); color: #fff; font-weight: 700; padding: 10px 22px; border: none; border-radius: 6px; cursor: pointer;
+      transition: background .17s;
+    }
+    .admin-form button:hover { background: var(--color-button-hover);}
+    .admin-logout { margin-top: 12px; color: #e53935; background: none; border: none; cursor: pointer; font-weight: 700;}
+    .admin-list { margin-top: 28px;}
+    .admin-car-title { font-weight: 700; }
+    .admin-msg { color: #e53935; margin-bottom: 7px; font-size: .98rem;}
+    .hidden {display:none;}
+    @media (max-width: 900px) {
+      .hero { flex-direction: column; gap: 16px; padding: 32px 12px; }
+      .hero-img { text-align: center;}
+      .hero-img img { width: 260px;}
+    }
+    @media (max-width: 600px) {
+      .main { padding: 0 2px; }
+      .car-card { padding: 0;}
+      .car-content { padding: 15px 10px 13px 10px;}
+      .hero { padding: 18px 6px;}
+      .hero-title { font-size: 1.3rem;}
+      .hero-img img { width: 160px;}
+      .modal { padding: 20px 5vw 16px 5vw;}
+      .modal-title { font-size: 1.2rem;}
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
 </head>
 <body>
   <nav class="appbar">
     <span class="appbar-title">
-      <img src="https://i.ibb.co/4W2DGKm/car-logo.png" class="logo" alt="Chidix Logo"/>
-      Chidix Auto Enterprise
+      <img src="https://i.ibb.co/4W2DGKm/car-logo.png" class="logo" alt="Chidoxic Logo"/>
+      Chidoxic Auto Mobile Center
     </span>
     <span class="appbar-btns">
       <button onclick="scrollToSection('gallery')">Browse Cars</button>
       <button onclick="showAbout()">About</button>
       <button onclick="showContact()">Contact</button>
+      <button class="theme-toggle" id="themeToggle" title="Toggle dark/light mode">🌙</button>
       <button id="adminBtn" onclick="toggleAdminPanel()">Admin</button>
     </span>
   </nav>
@@ -132,9 +473,10 @@
       </div>
     </section>
     <section class="car-list" id="gallery"></section>
+    <!-- Admin Panel -->
     <section class="admin-panel" id="adminPanel">
       <div class="admin-title">Admin Panel</div>
-      <form class="admin-form" id="adminForm" enctype="multipart/form-data" autocomplete="off">
+      <form class="admin-form" id="adminForm" autocomplete="off">
         <div class="admin-msg" id="adminMsg"></div>
         <div class="admin-row">
           <label for="carTitle">Title</label>
@@ -153,46 +495,86 @@
           <textarea id="carDesc" required></textarea>
         </div>
         <div class="admin-row">
-          <label>Car Images or Videos (drag & drop or select, any number)</label>
-          <div class="drag-drop-zone" id="dragDropZone">Drag & drop files here or click to select</div>
-          <input type="file" id="carImages" accept="image/*,video/*,.pdf" multiple style="display:none">
-          <div class="dragged-preview-list" id="previewList"></div>
+          <label for="carMedia">Images & Video (drag and drop or click, min 2 files)</label>
+          <div id="dragDropZone" class="drag-drop-zone">Drag & drop files here or click to select</div>
+          <input type="file" id="carMedia" accept="image/*,video/*" multiple style="display:none" />
+          <div class="file-list-preview" id="filePreview"></div>
         </div>
         <div class="admin-row">
           <label for="carFeatures">Features (comma separated)</label>
           <input type="text" id="carFeatures" required>
         </div>
-        <input type="hidden" id="editCarId"/>
-        <button type="submit">Add/Update Car</button>
+        <button type="submit">Add Car</button>
       </form>
       <button class="admin-logout" id="adminLogout" onclick="logoutAdmin()">Logout</button>
+      <div class="admin-list" id="adminList"></div>
     </section>
   </main>
   <div id="modal-root"></div>
   <script>
-    // ---- Appwrite config ----
+    // --- Appwrite Config ---
     const APPWRITE_ENDPOINT = "https://fra.cloud.appwrite.io/v1";
     const APPWRITE_PROJECT = "684c13530011df315968";
     const APPWRITE_DB_ID = "684c1377001ab5d7cbc9";
     const APPWRITE_COLLECTION_ID = "684c138c000f8065661f";
-    const BUCKET_ID = "684c2916001d475351b8";
-    const ADMIN_EMAILS = ["supremeamerapplications@gmail.com", "supremealpha04@gmail.com"];
+    const APPWRITE_BUCKET_ID = "684c2916001d475351b8"; // <-- Set your bucket id here!
+    const ADMIN_EMAILS = ["supremeamerapplications@gmail.com", "supremealpha04@gmail.com", "supremealpha04@gmail.com"];
+
     const client = new Appwrite.Client();
     client.setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT);
     const account = new Appwrite.Account(client);
     const db = new Appwrite.Databases(client);
     const storage = new Appwrite.Storage(client);
+
     let cars = [];
     let isAdmin = false;
 
-    // Drag & Drop and Preview logic
+    // --- LIGHT/DARK MODE ---
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+      document.getElementById("themeToggle").innerText = theme === "dark" ? "☀️" : "🌙";
+    }
+    // Initial theme
+    (function(){
+      const saved = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      applyTheme(saved || (prefersDark ? "dark" : "light"));
+    })();
+    document.getElementById("themeToggle").onclick = function() {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      applyTheme(current === "dark" ? "light" : "dark");
+    };
+
+    // --- Drag & Drop Logic ---
     let selectedFiles = [];
-
     const dragDropZone = document.getElementById('dragDropZone');
-    const carImagesInput = document.getElementById('carImages');
-    const previewList = document.getElementById('previewList');
+    const fileInput = document.getElementById('carMedia');
+    const filePreview = document.getElementById('filePreview');
 
-    dragDropZone.addEventListener('click', () => carImagesInput.click());
+    function updatePreview() {
+      filePreview.innerHTML = "";
+      selectedFiles.forEach((f, i) => {
+        let preview = "";
+        if (f.type.startsWith("image/")) {
+          preview = `<img src="${URL.createObjectURL(f)}" alt="media" />`;
+        } else if (f.type.startsWith("video/")) {
+          preview = `<video src="${URL.createObjectURL(f)}" controls muted></video>`;
+        }
+        filePreview.innerHTML += `
+          <div class="file-preview-item">
+            ${preview}
+            <button class="remove-btn" title="Remove" onclick="removeSelectedFile(${i})">&times;</button>
+          </div>
+        `;
+      });
+    }
+    window.removeSelectedFile = function(idx) {
+      selectedFiles.splice(idx, 1);
+      updatePreview();
+    };
+
+    dragDropZone.addEventListener('click', () => fileInput.click());
     dragDropZone.addEventListener('dragover', e => {
       e.preventDefault();
       dragDropZone.classList.add('dragover');
@@ -204,53 +586,24 @@
     dragDropZone.addEventListener('drop', e => {
       e.preventDefault();
       dragDropZone.classList.remove('dragover');
-      handleFiles(e.dataTransfer.files);
-    });
-    carImagesInput.addEventListener('change', e => handleFiles(e.target.files));
-
-    function handleFiles(fileList) {
-      for (let file of fileList) {
-        selectedFiles.push(file);
-      }
-      renderFilePreviews();
-    }
-    function removePreview(idx) {
-      selectedFiles.splice(idx, 1);
-      renderFilePreviews();
-    }
-    function renderFilePreviews() {
-      previewList.innerHTML = '';
-      selectedFiles.forEach((file, idx) => {
-        let el;
-        if (file.type.startsWith('image/')) {
-          el = document.createElement('div');
-          el.style.position = "relative";
-          const img = document.createElement('img');
-          img.src = URL.createObjectURL(file);
-          el.appendChild(img);
-        } else if (file.type.startsWith('video/')) {
-          el = document.createElement('div');
-          el.style.position = "relative";
-          const vid = document.createElement('video');
-          vid.src = URL.createObjectURL(file);
-          vid.controls = false;
-          vid.muted = true;
-          vid.autoplay = false;
-          el.appendChild(vid);
-        } else {
-          el = document.createElement('div');
-          el.style.position = "relative";
-          el.innerHTML = `<span style="font-size: .9em;">${file.name}</span>`;
+      const files = Array.from(e.dataTransfer.files);
+      files.forEach(f => {
+        if ((f.type.startsWith("image/") || f.type.startsWith("video/")) && !selectedFiles.some(sf => sf.name === f.name && sf.size === f.size)) {
+          selectedFiles.push(f);
         }
-        const rmBtn = document.createElement('button');
-        rmBtn.className = "remove-preview-btn";
-        rmBtn.innerText = "✕";
-        rmBtn.onclick = () => removePreview(idx);
-        el.appendChild(rmBtn);
-        previewList.appendChild(el);
       });
-    }
+      updatePreview();
+    });
+    fileInput.addEventListener('change', e => {
+      Array.from(e.target.files).forEach(f => {
+        if ((f.type.startsWith("image/") || f.type.startsWith("video/")) && !selectedFiles.some(sf => sf.name === f.name && sf.size === f.size)) {
+          selectedFiles.push(f);
+        }
+      });
+      updatePreview();
+    });
 
+    // --- Load Cars from Appwrite ---
     async function loadCars() {
       try {
         const res = await db.listDocuments(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, [Appwrite.Query.orderDesc("$createdAt")]);
@@ -265,33 +618,28 @@
     function renderCars() {
       const gallery = document.getElementById('gallery');
       gallery.innerHTML = "";
-      cars.forEach((car) => {
-        const features = car.features ? (Array.isArray(car.features) ? car.features : car.features.split(',')) : [];
-        const soldBadge = car.sold ? ' <span style="color:#e53935;font-size:1rem;">[SOLD]</span>' : '';
-        const images = car.images && car.images.length ? car.images : [];
-        let mediaHtml = "";
-        if (images.length > 0) {
-          const first = images[0];
-          if (first.match(/\.(mp4|webm|ogg)$/i)) {
-            mediaHtml = `<video src="${first}" controls style="width:100%;height:100%;object-fit:cover;background:#18192e;"></video>`;
-          } else if (first.endsWith('.pdf')) {
-            mediaHtml = `<a href="${first}" target="_blank" style="color:#3167e6;font-weight:600;">View PDF</a>`;
-          } else {
-            mediaHtml = `<img src="${first}" alt="${car.title}" loading="lazy">`;
-          }
+      cars.forEach((car, idx) => {
+        const delay = 0.08 * idx;
+        // Use first image or video as cover
+        let cover = "";
+        if (car.media && Array.isArray(car.media) && car.media.length) {
+          const first = car.media.find(m => m.type === "image") || car.media[0];
+          cover = first ? first.url : "";
         }
+        const features = car.features ? (Array.isArray(car.features) ? car.features : car.features.split(',')) : [];
         const card = document.createElement('div');
         card.className = "car-card";
+        card.style.animationDelay = delay + 's';
         card.innerHTML = `
-          <div class="car-img">${mediaHtml}</div>
+          <div class="car-img">${cover ? `<img src="${cover}" alt="${car.title}">` : ""}</div>
           <div class="car-content">
-            <div class="car-title">${car.title}${soldBadge}</div>
+            <div class="car-title">${car.title}</div>
             <div class="car-model">${car.model}</div>
             <div class="car-desc">${car.description.slice(0, 84)}...</div>
             <div class="car-features">${features.map(f => `<span>${f.trim()}</span>`).join('')}</div>
             <div class="car-price">${car.price}</div>
             <div class="car-action">
-              <button onclick="showCarModal('${car.$id}')">Details / Inquiry</button>
+              <button onclick="showCarModal('${car.$id}')">View Details</button>
             </div>
           </div>
         `;
@@ -303,41 +651,24 @@
       const car = cars.find(c => c.$id === id);
       if (!car) return;
       const features = car.features ? (Array.isArray(car.features) ? car.features : car.features.split(',')) : [];
-      const soldBadge = car.sold ? ' <span style="color:#e53935;font-size:1rem;">[SOLD]</span>' : '';
-      const files = car.images && car.images.length ? car.images : [];
-      let thumbListHtml = '';
-      if (files.length > 1) {
-        thumbListHtml = `<div class="modal-thumb-list">${files.map((file, i) => {
-          if (file.match(/\.(mp4|webm|ogg)$/i)) {
-            return `<video src="${file}" class="modal-thumb${i===0?' active':''}" onclick="selectModalImg(${i})"></video>`;
-          } else if (file.endsWith('.pdf')) {
-            return `<a href="${file}" target="_blank" class="modal-thumb${i===0?' active':''}">PDF</a>`;
-          } else {
-            return `<img src="${file}" class="modal-thumb${i===0?' active':''}" onclick="selectModalImg(${i})" alt="Car photo ${i+1}">`;
+      let gallery = "";
+      if (car.media && Array.isArray(car.media)) {
+        gallery = `<div class="modal-gallery">` + car.media.map(media => {
+          if (media.type === "image") {
+            return `<img src="${media.url}" alt="car image" loading="lazy">`;
+          } else if (media.type === "video") {
+            return `<video src="${media.url}" controls style="background:#222"></video>`;
           }
-        }).join('')}</div>`;
+          return "";
+        }).join('') + `</div>`;
       }
-      let mainHtml = '';
-      if (files[0]) {
-        if (files[0].match(/\.(mp4|webm|ogg)$/i)) {
-          mainHtml = `<video class="modal-video" id="modalMainMedia" src="${files[0]}" controls autoplay></video>`;
-        } else if (files[0].endsWith('.pdf')) {
-          mainHtml = `<a href="${files[0]}" target="_blank" class="modal-img" id="modalMainMedia" style="display:block;text-align:center;">View PDF</a>`;
-        } else {
-          mainHtml = `<img class="modal-img" id="modalMainMedia" src="${files[0]}" alt="Car photo">`;
-        }
-      }
-      document.getElementById('modal-root').innerHTML = `
+      const modalRoot = document.getElementById('modal-root');
+      modalRoot.innerHTML = `
         <div class="modal-backdrop" onclick="closeModal(event)">
           <div class="modal" onclick="event.stopPropagation()">
-            <button class="modal-close" onclick="closeModal(event)">&times;</button>
-            ${thumbListHtml}
-            <div class="modal-main-carousel">
-              <button onclick="carouselPrev(${id})" style="font-size:1.7em;border:none;background:none;cursor:pointer;">&#8592;</button>
-              ${mainHtml}
-              <button onclick="carouselNext(${id})" style="font-size:1.7em;border:none;background:none;cursor:pointer;">&#8594;</button>
-            </div>
-            <div class="modal-title">${car.title}${soldBadge}</div>
+            <button class="modal-close" onclick="closeModal(event)" title="Close">&times;</button>
+            ${gallery}
+            <div class="modal-title">${car.title}</div>
             <div class="modal-model">Model Year: ${car.model}</div>
             <div class="modal-price">Price: ${car.price}</div>
             <div class="modal-features">${features.map(f => `<span>${f.trim()}</span>`).join(' ')}</div>
@@ -349,59 +680,54 @@
         </div>
       `;
       document.body.style.overflow = "hidden";
-      window.__modalFiles = files;
-      window.__modalIdx = 0;
-      window.selectModalImg = function(idx) {
-        window.__modalIdx = idx;
-        updateMainModalMedia();
-        updateThumbActive();
-      };
-      window.carouselPrev = function() {
-        window.__modalIdx = (window.__modalIdx - 1 + files.length) % files.length;
-        updateMainModalMedia();
-        updateThumbActive();
-      };
-      window.carouselNext = function() {
-        window.__modalIdx = (window.__modalIdx + 1) % files.length;
-        updateMainModalMedia();
-        updateThumbActive();
-      };
-      function updateThumbActive() {
-        const thumbs = document.querySelectorAll('.modal-thumb');
-        thumbs.forEach((el, i) => el.classList.toggle('active', i === window.__modalIdx));
-      }
-      function updateMainModalMedia() {
-        const idx = window.__modalIdx;
-        const file = files[idx];
-        let mediaHtml = "";
-        if (file.match(/\.(mp4|webm|ogg)$/i)) {
-          mediaHtml = `<video class="modal-video" id="modalMainMedia" src="${file}" controls autoplay></video>`;
-        } else if (file.endsWith('.pdf')) {
-          mediaHtml = `<a href="${file}" target="_blank" class="modal-img" id="modalMainMedia" style="display:block;text-align:center;">View PDF</a>`;
-        } else {
-          mediaHtml = `<img class="modal-img" id="modalMainMedia" src="${file}" alt="Car photo">`;
-        }
-        document.getElementById('modalMainMedia').outerHTML = mediaHtml;
-      }
     }
-
     function closeModal(e) {
       document.getElementById('modal-root').innerHTML = "";
       document.body.style.overflow = "";
-      window.__modalFiles = [];
-      window.__modalIdx = 0;
     }
 
     function scrollToSection(id) {
       const el = document.getElementById(id);
       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-
     function showAbout() {
-      alert("Chidix Auto Enterprise is a modern, animated, and responsive car dealership showcase with image/video uploads, drag-and-drop, and thumbnail carousel!");
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="closeModal(event)">
+          <div class="modal" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event)">&times;</button>
+            <div class="modal-title">About Chidoxic Auto Mobile Center</div>
+            <div class="modal-desc" style="margin-bottom:18px;">
+              <b>Chidoxic Auto Mobile Center</b> is a modern, animated, and responsive car dealership showcase. Browse a handpicked selection of the world's best cars, each presented with smooth UI transitions and info straight from the cloud database.
+              <ul style="padding-left:20px; margin:0;">
+                <li>Modern, clean design with smooth animations and transitions</li>
+                <li>Detailed car info including price, model, features, and high-res images</li>
+                <li>Powered by Appwrite backend</li>
+                <li>Responsive and works on all devices</li>
+              </ul>
+            </div>
+            <div class="modal-action"><button onclick="closeModal(event)">Close</button></div>
+          </div>
+        </div>
+      `;
+      document.body.style.overflow = "hidden";
     }
     function showContact() {
-      alert("Email: info@chidoxicauto.com\nPhone: +1 (234) 567-890\nLocation: 123 Dream Cars Blvd, Auto City, USA");
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="closeModal(event)">
+          <div class="modal" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event)">&times;</button>
+            <div class="modal-title">Contact Us</div>
+            <div class="modal-desc" style="margin-bottom:16px;">
+              <b>Looking for a car or need more details?</b> <br>
+              Email: <a href="mailto:info@chidoxicauto.com" style="color:#3167e6;">info@chidoxicauto.com</a><br>
+              Phone: <a href="tel:+1234567890" style="color:#3167e6;">+1 (234) 567-890</a><br>
+              Location: 123 Dream Cars Blvd, Auto City, USA
+            </div>
+            <div class="modal-action"><button onclick="closeModal(event)">Close</button></div>
+          </div>
+        </div>
+      `;
+      document.body.style.overflow = "hidden";
     }
 
     function toggleAdminPanel() {
@@ -419,10 +745,10 @@
             <div class="modal-title">Admin Login</div>
             <form id="adminLoginForm" style="margin-top:17px;">
               <label>Email</label>
-              <input type="email" id="adminEmail" required>
-              <label>Password</label>
-              <input type="password" id="adminPassword" required>
-              <button>Login</button>
+              <input type="email" id="adminEmail" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #c7d1eb;">
+              <label style="margin-top:8px;">Password</label>
+              <input type="password" id="adminPassword" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #c7d1eb;">
+              <button style="margin-top:14px;width:100%;background:#3167e6;color:#fff;padding:10px;border:none;border-radius:6px;font-weight:700;cursor:pointer;">Login</button>
               <div id="loginMsg" style="color:#e53935;margin-top:8px;"></div>
             </form>
           </div>
@@ -442,7 +768,6 @@
           isAdmin = true;
           closeModal();
           document.getElementById('adminPanel').classList.add('active');
-          renderAdminCarList();
         } catch (err) {
           document.getElementById('loginMsg').innerText = "Login failed. Check email and password.";
         }
@@ -454,42 +779,44 @@
       document.getElementById('adminPanel').classList.remove('active');
     }
 
+    // --- Admin Add Car Logic ---
     document.getElementById('adminForm').onsubmit = async function(e) {
       e.preventDefault();
       const title = document.getElementById('carTitle').value.trim();
       const model = document.getElementById('carModel').value.trim();
       const price = document.getElementById('carPrice').value.trim();
       const description = document.getElementById('carDesc').value.trim();
-      const features = document.getElementById('carFeatures').value.trim().split(',').map(f=>f.trim()).filter(f=>f);
-      const editCarId = document.getElementById('editCarId') ? document.getElementById('editCarId').value : '';
-      let imagesArr = [];
-      if (selectedFiles.length > 0) {
-        for (let file of selectedFiles) {
-          const uploadRes = await storage.createFile(BUCKET_ID, Appwrite.ID.unique(), file);
-          const fileId = uploadRes.$id;
-          imagesArr.push(`${APPWRITE_ENDPOINT}/storage/buckets/${BUCKET_ID}/files/${fileId}/view?project=${APPWRITE_PROJECT}`);
-        }
+      const features = document.getElementById('carFeatures').value.trim().split(',').map(f=>f.trim()).filter(Boolean);
+      if (!title || !model || !price || !description || !features.length) {
+        document.getElementById('adminMsg').innerText = "All fields are required.";
+        return;
       }
+      if (selectedFiles.length < 2) {
+        document.getElementById('adminMsg').innerText = "Please upload at least 2 images or videos.";
+        return;
+      }
+      document.getElementById('adminMsg').innerText = "Uploading files...";
       try {
-        if (editCarId) {
-          await db.updateDocument(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, editCarId, {
-            title, model, price, description, features, ...(imagesArr.length ? {images: imagesArr} : {})
-          });
-          document.getElementById('adminMsg').innerText = "Car updated!";
-        } else {
-          await db.createDocument(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, Appwrite.ID.unique(), {
-            title, model, price, description, images: imagesArr, features, sold: false
-          });
-          document.getElementById('adminMsg').innerText = "Car added!";
+        let mediaArr = [];
+        for (let file of selectedFiles) {
+          let uploadRes = await storage.createFile(APPWRITE_BUCKET_ID, Appwrite.ID.unique(), file);
+          let url = storage.getFilePreview(APPWRITE_BUCKET_ID, uploadRes.$id).href;
+          let type = file.type.startsWith('image/') ? 'image' : (file.type.startsWith('video/') ? 'video' : 'other');
+          mediaArr.push({ url, type, name: file.name });
         }
+        await db.createDocument(
+          APPWRITE_DB_ID,
+          APPWRITE_COLLECTION_ID,
+          Appwrite.ID.unique(),
+          { title, model, price, description, features, media: mediaArr }
+        );
+        document.getElementById('adminMsg').innerText = "Car added successfully!";
         selectedFiles = [];
-        renderFilePreviews();
-        await loadCars();
+        updatePreview();
+        loadCars();
         this.reset();
-        document.getElementById('editCarId').value = "";
       } catch (err) {
-        document.getElementById('adminMsg').innerText = "Failed to add/update car. "+(err.message||'');
-        console.error(err);
+        document.getElementById('adminMsg').innerText = "Failed to add car.";
       }
     }
 
@@ -498,57 +825,9 @@
       let html = "<div style='margin-bottom:10px;font-weight:700;'>All Cars</div>";
       if (!cars.length) html += "<div>No cars found.</div>";
       else cars.forEach(car => {
-        const soldLabel = car.sold ? '<span style="color:#e53935;font-weight:700;"> [SOLD]</span>' : '';
-        html += `
-          <div class="admin-car-title">
-            ${car.title} (${car.model}) - <span style="color:#3167e6;">${car.price}</span>${soldLabel}
-            <button onclick="editCar('${car.$id}')">Edit</button>
-            <button onclick="deleteCar('${car.$id}', '${(car.images && car.images[0] ? car.images[0] : "").replace(/'/g,"\\'")}')">Delete</button>
-            ${!car.sold ? `<button onclick="markSold('${car.$id}')">Mark as Sold</button>` : ''}
-          </div>
-        `;
+        html += `<div class="admin-car-title">${car.title} (${car.model}) - <span style="color:#3167e6;">${car.price}</span></div>`;
       });
-      // Optionally, set admin list
       document.getElementById('adminList').innerHTML = html;
-    }
-
-    function editCar(carId) {
-      const car = cars.find(c => c.$id === carId);
-      if (!car) return;
-      document.getElementById('carTitle').value = car.title;
-      document.getElementById('carModel').value = car.model;
-      document.getElementById('carPrice').value = car.price;
-      document.getElementById('carDesc').value = car.description;
-      document.getElementById('carFeatures').value = Array.isArray(car.features) ? car.features.join(', ') : car.features;
-      document.getElementById('editCarId').value = car.$id;
-      // Reset file previews
-      selectedFiles = [];
-      renderFilePreviews();
-    }
-
-    async function deleteCar(carId, imageUrl) {
-      if (!confirm("Are you sure you want to delete this car?")) return;
-      try {
-        await db.deleteDocument(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, carId);
-        const match = imageUrl.match(/files\/(.*?)\//);
-        if (match && match[1]) {
-          const fileId = match[1];
-          await storage.deleteFile(BUCKET_ID, fileId);
-        }
-        await loadCars();
-        alert("Car deleted.");
-      } catch (e) {
-        alert("Failed to delete car.");
-      }
-    }
-
-    async function markSold(carId) {
-      try {
-        await db.updateDocument(APPWRITE_DB_ID, APPWRITE_COLLECTION_ID, carId, { sold: true });
-        await loadCars();
-      } catch (e) {
-        alert("Failed to mark as sold.");
-      }
     }
 
     (async function(){
