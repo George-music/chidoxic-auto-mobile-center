@@ -39,49 +39,133 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 18px;
-      height: 71px;
+      height: 60px;
       max-width: 100vw;
       box-shadow: 0 4px 32px #3c5edb44;
+      transition: height .2s;
     }
     .appbar-title {
-      font-size: 2em; font-weight:900; letter-spacing:1.2px; display:flex; align-items:center; gap:10px;
+      font-size: 1.2em; font-weight:900; letter-spacing:1.1px; display:flex; align-items:center; gap:9px;
     }
     .logo {
-      width: 36px; height: 36px; border-radius: 50%; margin-right:10px; object-fit: cover;
+      width: 30px; height: 30px; border-radius: 50%; margin-right:7px;
       background: #fff;
       border: 2px solid #3c5edb;
     }
     .appbar-btns {
-      display: flex;
+      display: flex; align-items: center; gap: 0;
+    }
+    .appbar-btns button {
+      background: #fff1;
+      border: none;
+      color: #fff;
+      font-size: 1em;
+      margin-left: 8px;
+      font-weight: 600;
+      padding: 9px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .18s, color .18s, transform .13s;
+      outline: none;
+      box-shadow: 0 2px 6px #3c5edb20;
+      min-width: 42px;
+      min-height: 42px;
+      display: inline-flex;
       align-items: center;
-      gap: 0;
+      justify-content: center;
     }
-    .appbar-btns button, .appbar-btns a {
-      background: none; border: none; color: #fff; font-size: 1em; margin-left: 12px; cursor: pointer;
-      font-weight:600; padding: 7px 16px; border-radius:6px; transition: background .2s, color .2s;
-      text-decoration: none;
-      display: inline-block;
+    .appbar-btns button.theme-toggle {
+      font-size: 1.18em;
+      padding: 7px 11px;
+      background: transparent;
+      border: 2px solid #ffe36b88;
+      margin-left: 7px;
     }
-    .appbar-btns button:hover, .appbar-btns a:hover {
-      background: #fff; color: var(--primary);
+    .appbar-btns button:active {
+      background: var(--secondary);
+      color: var(--primary);
+      transform: scale(0.96);
     }
+    .appbar-btns button:hover {
+      background: #fff;
+      color: var(--primary);
+      transform: scale(1.04);
+    }
+
+    @media (max-width: 700px) {
+      .appbar {
+        flex-direction: column;
+        align-items: stretch;
+        height: auto;
+        padding: 0;
+        min-height: unset;
+        gap: 0;
+      }
+      .appbar-title {
+        font-size: 1em;
+        flex-direction: row;
+        justify-content: center;
+        padding: 7px 0 2px 0;
+      }
+      .appbar-btns {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
+        padding-bottom: 7px;
+        margin-top: 0;
+      }
+      .appbar-btns button {
+        margin-left: 0;
+        margin-right: 7px;
+        margin-bottom: 4px;
+        min-width: 46vw;
+        width: 98vw;
+        max-width: 310px;
+        font-size: 1.09em;
+        padding: 13px 0;
+        border-radius: 10px;
+      }
+      .appbar-btns button.theme-toggle {
+        min-width: 48px;
+        width: 48px;
+        padding: 10px 0;
+        font-size: 1.20em;
+        margin-left: 0;
+      }
+    }
+
+    @media (max-width: 470px) {
+      .appbar-title { font-size: 0.98em; }
+      .logo { width: 22px; height: 22px; }
+      .appbar-btns button { font-size: 0.97em; }
+    }
+
     .main {
       max-width: 1180px;
-      margin: 80px auto 32px auto;
-      padding: 0 12px;
+      margin: 75px auto 32px auto;
+      padding: 0 8px;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
     .hero {
-      max-width: 900px; margin: 0 auto 30px auto; text-align: center; padding: 38px 16px 34px 16px;
+      max-width: 900px;
+      margin: 0 auto 30px auto;
+      text-align: center;
+      padding: 30px 10px 26px 10px;
       background: linear-gradient(100deg,#f9fbff 65%, #e3ebff 100%);
-      border-radius: 18px; box-shadow: var(--shadow);
-      display:flex; flex-direction:column; align-items:center;
-      position:relative; overflow:hidden;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
     }
-    .hero-title { font-size: 2.1em; color: var(--primary); font-weight: 800; margin-bottom: 10px; line-height:1.13;}
-    .hero-desc { color: #333; font-size: 1.13em; margin-bottom: 18px; font-weight: 500; }
+    .hero-title { font-size: 1.5em; color: var(--primary); font-weight: 800; margin-bottom: 10px; line-height:1.13;}
+    .hero-desc { color: #333; font-size: 1.05em; margin-bottom: 18px; font-weight: 500; }
     .hero-action {
       margin-top: 6px;
       background: var(--primary); color: #fff; font-weight:700; border:none;
@@ -89,28 +173,39 @@
       transition: background .2s, color .2s;
     }
     .hero-action:hover { background: var(--text); color:var(--secondary);}
-    .hero-img img { width: 220px; border-radius: 8px; box-shadow: 0 8px 32px #3c5edb13; margin-top: 22px;}
+    .hero-img img { width: 180px; border-radius: 8px; box-shadow: 0 8px 32px #3c5edb13; margin-top: 22px;}
+    @media (max-width:600px){
+      .main {padding:0 2px;}
+      .hero{padding:12px 2vw;}
+      .hero-title{font-size:1.06em;}
+      .hero-img img{width:120px;}
+    }
+
     .car-list {
-      display:grid; grid-template-columns:repeat(auto-fit,minmax(310px,1fr)); gap:32px;
-      max-width:1200px; margin:34px auto 38px auto; padding:0 12px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px,1fr));
+      gap: 18px;
+      max-width:1200px;
+      margin:24px auto 40px auto;
+      padding:0 1vw;
       width: 100%;
     }
     .car-card {
-      background: #fff; border-radius:18px; box-shadow: var(--shadow);
+      background: #fff; border-radius:14px; box-shadow: var(--shadow);
       overflow:hidden; display:flex; flex-direction:column; position:relative;
       cursor:pointer; transition: box-shadow .23s, transform .23s;
     }
     .car-card:hover { box-shadow:0 16px 48px #3c5edb33; transform:scale(1.025) rotateZ(-1.1deg);}
     .car-img {
-      width: 100%; background: #efeffb; display: flex; align-items:center; justify-content:center; min-height: 170px;
+      width: 100%; background: #efeffb; display: flex; align-items:center; justify-content:center; min-height: 150px;
       overflow:hidden;
     }
-    .car-img img { max-width:100%; max-height:180px; border-radius:12px; margin: 0 auto; display:block; box-shadow:0 2px 9px #3c5edb12; }
-    .car-content { padding: 18px 15px 14px 15px; position:relative;}
-    .car-title { font-weight:800; font-size:1.18em; color:var(--primary); }
-    .car-model, .car-features { font-size:1em; color:#3c5edb; margin: 5px 0;}
-    .car-desc { font-size:1.04em; color:#333; margin-top:7px; }
-    .car-price { font-size:1.1em; font-weight:700; color: #e58f00; margin-top:8px;}
+    .car-img img { max-width:100%; max-height:160px; border-radius:12px; margin: 0 auto; display:block; box-shadow:0 2px 9px #3c5edb12; }
+    .car-content { padding: 15px 13px 12px 13px; position:relative;}
+    .car-title { font-weight:800; font-size:1.09em; color:var(--primary);}
+    .car-model, .car-features { font-size:0.99em; color:#3c5edb; margin: 5px 0;}
+    .car-desc { font-size:0.99em; color:#333; margin-top:7px; }
+    .car-price { font-size:1.06em; font-weight:700; color: #e58f00; margin-top:8px;}
     .car-action {margin-top:8px;}
     .car-action button {
       background: var(--primary); color: #fff; border-radius: 7px; border: none;
@@ -118,42 +213,23 @@
       transition: background .18s, color .18s;
     }
     .car-action button:hover { background: var(--secondary); color: var(--primary);}
-    .admin-panel {
-      display:none; max-width:430px; margin:38px auto 0 auto; background:#fff; padding:28px 24px 25px 24px;
-      border-radius:12px; box-shadow:0 3px 17px #3c5edb0d;
+    @media (max-width:600px){
+      .car-list{grid-template-columns:1fr;}
+      .car-card{padding:0;}
+      .car-content{padding:11px 5px 9px 5px;}
     }
-    .admin-panel.active { display:block; }
-    .admin-title { font-weight: 800; font-size: 1.3rem; margin-bottom: 12px; color: var(--primary);}
-    .admin-form label { font-weight: 600; display: block; margin-top: 8px; }
-    .admin-form input, .admin-form textarea {
-      width: 100%; padding: 8px 10px; font-size: 1rem; border-radius: 6px; border: 1px solid #c7d1eb; margin-top: 3px; background: transparent; color: var(--text);
-      transition: background .2s, color .2s;
-    }
-    .admin-form textarea { min-height: 54px; }
-    .admin-form .admin-row { margin-bottom: 11px; }
-    .admin-form button {
-      background: var(--primary); color: #fff; font-weight: 700; padding: 10px 22px; border: none; border-radius: 6px; cursor: pointer;
-      transition: background .17s;
-    }
-    .admin-form button:hover { background: var(--secondary); color: var(--primary);}
-    .admin-logout { margin-top: 12px; color: #e53935; background: none; border: none; cursor: pointer; font-weight: 700;}
-    .admin-list { margin-top: 28px;}
-    .admin-car-title { font-weight: 700; }
-    .admin-msg { color: #e53935; margin-bottom: 7px; font-size: .98rem;}
     .modal-backdrop {
       position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(26,34,51,0.18); z-index:999;
       display:flex; align-items:center; justify-content:center;
-      animation: fadeIn .33s;
     }
-    @keyframes fadeIn {from{opacity:0;}to{opacity:1;}}
     .modal {
-      background:#fff; border-radius:19px; max-width:95vw; max-height:93vh; overflow-y:auto;
-      box-shadow:0 16px 60px 0 rgba(49,103,230,0.22); padding:39px 39px 31px 39px; position:relative;
-      min-width:320px;
+      background:#fff; border-radius:16px; max-width:95vw; max-height:93vh; overflow-y:auto;
+      box-shadow:0 16px 60px 0 rgba(49,103,230,0.18); padding:27px 18px 17px 18px; position:relative;
+      min-width:260px;
     }
     .modal-close {
-      position: absolute; top: 15px; right: 18px;
-      font-size: 1.5rem;
+      position: absolute; top: 11px; right: 16px;
+      font-size: 1.4rem;
       color: var(--primary);
       background: none; border: none; cursor: pointer;
       font-weight: 800;
@@ -161,21 +237,20 @@
     }
     .modal-close:hover { color: #e53935; }
     .modal-gallery {
-      display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-bottom: 18px;
+      display: flex; flex-wrap: wrap; gap: 9px; justify-content: center; margin-bottom: 14px;
     }
     .modal-gallery img, .modal-gallery video {
-      border-radius: 10px; box-shadow: 0 2px 12px rgba(49,103,230,0.13);
-      max-width: 180px; max-height: 130px; object-fit: cover;
+      border-radius: 7px; max-width: 110px; max-height: 80px; object-fit: cover;
       background: #e3ebff;
     }
-    .modal-title { font-size: 1.3em; font-weight: 800; margin-bottom: 4px; color: var(--primary);}
-    .modal-model { color: var(--primary); font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
-    .modal-price { font-size: 1.1rem; font-weight: 700; color: #e58f00; margin-bottom: 8px; }
-    .modal-desc { color: #444e62; font-size: 1.07rem; margin-bottom: 18px; }
-    .modal-features { margin-bottom: 10px; }
-    .modal-features span { background: #e3ebff; color: var(--primary); font-weight: 500; border-radius: 5px; padding: 2px 10px; font-size: 1.01rem; margin-right: 8px; margin-bottom: 5px; display: inline-block;}
+    .modal-title { font-size: 1.1em; font-weight: 800; margin-bottom: 2px; color: var(--primary);}
+    .modal-model { color: var(--primary); font-size: 1em; font-weight: 700; margin-bottom: 5px; }
+    .modal-price { font-size: 1.07em; font-weight: 700; color: #e58f00; margin-bottom: 5px; }
+    .modal-desc { color: #444e62; font-size: 0.99em; margin-bottom: 12px; }
+    .modal-features { margin-bottom: 8px; }
+    .modal-features span { background: #e3ebff; color: var(--primary); font-weight: 500; border-radius: 5px; padding: 1.5px 9px; font-size: 1em; margin-right: 6px; margin-bottom: 4px; display: inline-block;}
     .modal-action { text-align: right; }
-    .modal-action button { background: var(--primary); color: #fff; border: none; font-size: 1.09rem; font-weight: 700; padding: 10px 27px; border-radius: 7px; cursor: pointer; transition: background .2s, transform .14s; margin:0; }
+    .modal-action button { background: var(--primary); color: #fff; border: none; font-size: 1em; font-weight: 700; padding: 8px 19px; border-radius: 7px; cursor: pointer; transition: background .2s, transform .14s; margin:0; }
     .modal-action button:hover { background: var(--secondary); color: var(--primary);}
     .footer {
       background: #f1f2f7;
@@ -190,22 +265,8 @@
     .footer a { color: #3c5edb; text-decoration: underline; margin: 0 7px;}
     .footer .designer { font-weight:700; color: #2345a9;}
     .footer-links { margin-top:7px; font-size:.99em; }
-    @media (max-width: 900px) {
-      .main { padding: 0 2vw; }
-      .car-list { grid-template-columns:1fr;}
-      .hero { padding:20px 2vw;}
-      .admin-panel {width:98vw;}
-      .modal {padding:20px 2vw 18px 2vw;}
-    }
-    @media (max-width: 600px) {
-      .main { padding: 0 2px;}
-      .car-list {grid-template-columns:1fr;}
-      .car-content {padding:13px 4px 10px 4px;}
-      .hero { padding:12px 2vw;}
-      .hero-title { font-size:1.3em;}
-      .modal {padding:12px 2vw 10px 2vw; min-width:unset;}
-      .modal-title { font-size:1.08em;}
-      .admin-panel {width:99vw; padding:13px 2vw;}
+    @media (max-width:600px){
+      .footer{padding:8px 1vw;font-size:.98em;}
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
@@ -262,7 +323,7 @@
         </div>
         <div class="admin-row">
           <label for="carMedia">Images & Video (drag and drop or click, min 2 files)</label>
-          <div id="dragDropZone" class="drag-drop-zone">Drag & drop files here or click to select</div>
+          <div id="dragDropZone" class="drag-drop-zone" style="background:#f4f7ff;padding:15px;text-align:center;border:2px dashed #3c5edb;border-radius:8px;cursor:pointer;">Drag & drop files here or click to select</div>
           <input type="file" id="carMedia" accept="image/*,video/*" multiple style="display:none" />
           <div class="file-list-preview" id="filePreview"></div>
         </div>
@@ -336,14 +397,14 @@
       selectedFiles.forEach((f, i) => {
         let preview = "";
         if (f.type.startsWith("image/")) {
-          preview = `<img src="${URL.createObjectURL(f)}" alt="media" />`;
+          preview = `<img src="${URL.createObjectURL(f)}" alt="media" style="max-width:60px;max-height:60px;border-radius:7px;" />`;
         } else if (f.type.startsWith("video/")) {
-          preview = `<video src="${URL.createObjectURL(f)}" controls muted></video>`;
+          preview = `<video src="${URL.createObjectURL(f)}" controls muted style="max-width:60px;max-height:60px;border-radius:7px;"></video>`;
         }
         filePreview.innerHTML += `
-          <div class="file-preview-item">
+          <div class="file-preview-item" style="display:inline-block;position:relative;margin-right:6px;">
             ${preview}
-            <button class="remove-btn" title="Remove" onclick="removeSelectedFile(${i})">&times;</button>
+            <button class="remove-btn" title="Remove" onclick="removeSelectedFile(${i})" style="position:absolute;top:-7px;right:-7px;background:#e53935;color:#fff;border:none;border-radius:50%;width:18px;height:18px;cursor:pointer;">&times;</button>
           </div>
         `;
       });
