@@ -7,16 +7,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #3c5edb;
+      --primary: #3167e6;
+      --primary-dark: #1a2233;
       --secondary: #ffe36b;
       --accent: #ffefb4;
       --danger: #e53935;
-      --bg: #f9fbff;
-      --dark-bg: #18192e;
-      --dark-card: #23243b;
+      --bg: #f7f8fa;
+      --card: #fff;
       --text: #1a2233;
-      --text-light: #e3e7fa;
-      --shadow: 0 8px 38px #3c5edb13;
+      --text-light: #e3eaf1;
+      --shadow: 0 6px 32px #3167e611;
+    }
+    [data-theme="dark"] {
+      --primary: #6ca0ff;
+      --primary-dark: #121b2c;
+      --bg: #181b24;
+      --card: #23243b;
+      --text: #e3eaf1;
+      --text-light: #fff;
+      --shadow: 0 6px 32px #19336433;
     }
     html, body { margin:0; padding:0; min-height:100vh; }
     body {
@@ -25,266 +34,370 @@
       color: var(--text);
       transition: background .3s, color .3s;
     }
-    [data-theme="dark"], body.dark {
-      background: var(--dark-bg);
-      color: var(--text-light);
-    }
-    .appbar {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 1001;
+    /* HEADER / NAV */
+    .header {
+      width: 100vw;
       background: var(--primary);
       color: #fff;
+      position: fixed;
+      top: 0; left: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 24px #19336413;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 18px;
-      height: 60px;
-      max-width: 100vw;
-      box-shadow: 0 4px 32px #3c5edb44;
-      transition: height .2s;
+      height: 58px;
+      padding: 0 13px;
     }
-    .appbar-title {
-      font-size: 1.2em; font-weight:900; letter-spacing:1.1px; display:flex; align-items:center; gap:9px;
+    .nav-left {
+      display: flex; align-items: center;
+      gap: 8px;
     }
     .logo {
-      width: 30px; height: 30px; border-radius: 50%; margin-right:7px;
-      background: #fff;
-      border: 2px solid #3c5edb;
+      width: 30px; height: 30px; border-radius: 50%; background: #fff; object-fit: cover; margin-right: 5px;
+      border: 2px solid var(--primary-dark);
     }
-    .appbar-btns {
-      display: flex; align-items: center; gap: 0;
+    .site-title {
+      font-size: 1.12em;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      line-height: 1.1;
+      margin: 0;
+      color: #fff;
+      white-space: nowrap;
     }
-    .appbar-btns button {
-      background: #fff1;
+    .nav-btns {
+      display: flex; gap: 2px; align-items: center;
+    }
+    .nav-btn {
+      background: transparent;
       border: none;
       color: #fff;
       font-size: 1em;
-      margin-left: 8px;
       font-weight: 600;
-      padding: 9px 15px;
-      border-radius: 8px;
+      padding: 7px 12px;
+      border-radius: 7px;
+      transition: background .18s, color .18s;
       cursor: pointer;
-      transition: background .18s, color .18s, transform .13s;
       outline: none;
-      box-shadow: 0 2px 6px #3c5edb20;
-      min-width: 42px;
-      min-height: 42px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+      min-width: 38px;
     }
-    .appbar-btns button.theme-toggle {
-      font-size: 1.18em;
-      padding: 7px 11px;
-      background: transparent;
-      border: 2px solid #ffe36b88;
-      margin-left: 7px;
-    }
-    .appbar-btns button:active {
-      background: var(--secondary);
-      color: var(--primary);
-      transform: scale(0.96);
-    }
-    .appbar-btns button:hover {
+    .nav-btn:hover, .nav-btn:focus {
       background: #fff;
       color: var(--primary);
-      transform: scale(1.04);
     }
-
-    @media (max-width: 700px) {
-      .appbar {
-        flex-direction: column;
-        align-items: stretch;
-        height: auto;
-        padding: 0;
-        min-height: unset;
-        gap: 0;
-      }
-      .appbar-title {
-        font-size: 1em;
-        flex-direction: row;
-        justify-content: center;
-        padding: 7px 0 2px 0;
-      }
-      .appbar-btns {
-        width: 100%;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 6px;
-        padding-bottom: 7px;
-        margin-top: 0;
-      }
-      .appbar-btns button {
-        margin-left: 0;
-        margin-right: 7px;
-        margin-bottom: 4px;
-        min-width: 46vw;
-        width: 98vw;
-        max-width: 310px;
-        font-size: 1.09em;
-        padding: 13px 0;
-        border-radius: 10px;
-      }
-      .appbar-btns button.theme-toggle {
-        min-width: 48px;
-        width: 48px;
-        padding: 10px 0;
-        font-size: 1.20em;
-        margin-left: 0;
-      }
+    .theme-toggle {
+      font-size: 1.1em;
+      padding: 6px 8px;
+      border: 2px solid #ffe36b90;
+      margin-left: 3px;
+      background: transparent;
+      color: #fff;
     }
-
-    @media (max-width: 470px) {
-      .appbar-title { font-size: 0.98em; }
-      .logo { width: 22px; height: 22px; }
-      .appbar-btns button { font-size: 0.97em; }
+    .nav-burger {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      margin-left: 5px;
+      width: 28px;
+      height: 28px;
+      justify-content: center;
+      align-items: center;
+      background: none;
+      border: none;
     }
-
+    .nav-burger span {
+      display: block;
+      width: 18px;
+      height: 2.7px;
+      background: #fff;
+      border-radius: 2px;
+      transition: all .25s;
+    }
+    /* Slideout mobile menu */
+    .nav-mobile-menu {
+      display: none;
+      position: fixed;
+      top: 0; right: 0;
+      background: var(--primary);
+      color: #fff;
+      width: 85vw; max-width: 270px;
+      height: 100vh;
+      box-shadow: -2px 0 12px #19336433;
+      z-index: 1200;
+      flex-direction: column;
+      padding: 21px 0 0 0;
+      animation: menuin .21s cubic-bezier(.78,.01,.48,1.23);
+    }
+    @keyframes menuin { from{transform: translateX(100%);} to{transform: translateX(0);} }
+    .nav-mobile-menu .nav-btn {
+      width: 100%;
+      justify-content: flex-start;
+      padding: 16px 18px;
+      font-size: 1.11em;
+      border-radius: 0;
+      border-bottom: 1px solid #ffffff22;
+    }
+    .nav-mobile-menu .theme-toggle {
+      margin-top: 7px;
+      margin-left: 14px;
+      border-radius: 7px;
+      border: 2px solid #ffe36b99;
+    }
+    .nav-mobile-close {
+      position: absolute;
+      top: 11px; right: 12px;
+      font-size: 2em;
+      background: none;
+      color: #fff;
+      border: none; cursor: pointer;
+      z-index: 1;
+    }
+    @media (max-width: 900px) {
+      .header { height: 52px; padding: 0 6px;}
+      .logo { width: 24px; height: 24px; }
+      .site-title { font-size: 1em; }
+      .nav-btns { gap: 1px; }
+      .nav-btn { font-size: 0.95em; padding: 6px 4px;}
+    }
+    @media (max-width: 600px) {
+      .header { height: 49px; padding: 0 1vw;}
+      .logo { width: 19px; height: 19px; margin-right: 2px;}
+      .site-title { font-size: 0.87em;}
+      .nav-btns { display: none; }
+      .nav-burger { display: flex;}
+      .main { margin-top: 55px !important;}
+    }
     .main {
-      max-width: 1180px;
-      margin: 75px auto 32px auto;
-      padding: 0 8px;
+      max-width: 900px;
+      margin: 68px auto 22px auto;
+      padding: 0 3px;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
     .hero {
-      max-width: 900px;
-      margin: 0 auto 30px auto;
-      text-align: center;
-      padding: 30px 10px 26px 10px;
-      background: linear-gradient(100deg,#f9fbff 65%, #e3ebff 100%);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
+      width: 100%;
+      background: linear-gradient(97deg, #e3ebff 65%, #f7f8fa 100%);
+      border-radius: 12px;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      gap: 20px;
       align-items: center;
-      position: relative;
-      overflow: hidden;
+      justify-content: space-between;
+      padding: 18px 7px 10px 7px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 12px #3167e61a;
     }
-    .hero-title { font-size: 1.5em; color: var(--primary); font-weight: 800; margin-bottom: 10px; line-height:1.13;}
-    .hero-desc { color: #333; font-size: 1.05em; margin-bottom: 18px; font-weight: 500; }
+    [data-theme="dark"] .hero { background: linear-gradient(97deg, #23243b 65%, #181b24 100%);}
+    .hero-content {
+      flex: 1 1 180px;
+      min-width: 0;
+    }
+    .hero-title {
+      font-size: 1.2em;
+      color: var(--primary);
+      font-weight: 800;
+      margin-bottom: 4px;
+      line-height: 1.15;
+    }
+    .hero-desc {
+      font-size: 0.99em;
+      margin-bottom: 8px;
+      font-weight: 500;
+      line-height: 1.35;
+      opacity: .92;
+    }
     .hero-action {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.01em;
+      border: none;
+      padding: 9px 17px;
+      border-radius: 6px;
+      box-shadow: 0 4px 14px #3167e620;
+      cursor: pointer;
+      transition: background .17s, transform .11s;
       margin-top: 6px;
-      background: var(--primary); color: #fff; font-weight:700; border:none;
-      padding:13px 33px; border-radius:9px; font-size:1.13em; cursor:pointer; box-shadow:0 3px 10px #3c5edb22;
-      transition: background .2s, color .2s;
     }
-    .hero-action:hover { background: var(--text); color:var(--secondary);}
-    .hero-img img { width: 180px; border-radius: 8px; box-shadow: 0 8px 32px #3c5edb13; margin-top: 22px;}
-    @media (max-width:600px){
-      .main {padding:0 2px;}
-      .hero{padding:12px 2vw;}
-      .hero-title{font-size:1.06em;}
-      .hero-img img{width:120px;}
+    .hero-action:hover {
+      background: var(--primary-dark);
+      color: #fff;
+      transform: scale(1.05);
     }
-
+    .hero-img {
+      flex: 0 0 60px;
+      text-align: right;
+      animation: floatCar 3s infinite ease-in-out alternate;
+      min-width: 60px;
+    }
+    .hero-img img {
+      width: 65px; max-width: 100%;
+      border-radius: 7px;
+      box-shadow: 0 8px 32px #3167e61a;
+    }
+    @keyframes floatCar { 0%{transform: translateY(0);} 100%{transform: translateY(11px);} }
+    @media (max-width: 700px){
+      .hero{flex-direction:column;gap:8px;padding:9px 1vw;}
+      .hero-img {text-align:center;}
+      .hero-img img {width: 48px;}
+      .main{margin-top:52px;}
+    }
     .car-list {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(270px,1fr));
-      gap: 18px;
-      max-width:1200px;
-      margin:24px auto 40px auto;
-      padding:0 1vw;
+      grid-template-columns: repeat(auto-fit, minmax(176px, 1fr));
+      gap: 8px;
       width: 100%;
+      margin-top: 4px;
     }
     .car-card {
-      background: #fff; border-radius:14px; box-shadow: var(--shadow);
-      overflow:hidden; display:flex; flex-direction:column; position:relative;
-      cursor:pointer; transition: box-shadow .23s, transform .23s;
+      background: var(--card);
+      border-radius: 8px;
+      box-shadow: 0 1px 5px #3167e611, 0 1.5px 7px #1a223311;
+      overflow: hidden;
+      transition: box-shadow .19s, transform .09s, background .17s;
+      display: flex;
+      flex-direction: column;
+      position: relative;
     }
-    .car-card:hover { box-shadow:0 16px 48px #3c5edb33; transform:scale(1.025) rotateZ(-1.1deg);}
+    .car-card:hover {
+      box-shadow: 0 6px 16px #3167e622, 0 2px 8px #1a223311;
+      transform: scale(1.025);
+    }
     .car-img {
-      width: 100%; background: #efeffb; display: flex; align-items:center; justify-content:center; min-height: 150px;
-      overflow:hidden;
-    }
-    .car-img img { max-width:100%; max-height:160px; border-radius:12px; margin: 0 auto; display:block; box-shadow:0 2px 9px #3c5edb12; }
-    .car-content { padding: 15px 13px 12px 13px; position:relative;}
-    .car-title { font-weight:800; font-size:1.09em; color:var(--primary);}
-    .car-model, .car-features { font-size:0.99em; color:#3c5edb; margin: 5px 0;}
-    .car-desc { font-size:0.99em; color:#333; margin-top:7px; }
-    .car-price { font-size:1.06em; font-weight:700; color: #e58f00; margin-top:8px;}
-    .car-action {margin-top:8px;}
-    .car-action button {
-      background: var(--primary); color: #fff; border-radius: 7px; border: none;
-      padding: 7px 20px; font-weight:700; font-size:1em; cursor:pointer;
-      transition: background .18s, color .18s;
-    }
-    .car-action button:hover { background: var(--secondary); color: var(--primary);}
-    @media (max-width:600px){
-      .car-list{grid-template-columns:1fr;}
-      .car-card{padding:0;}
-      .car-content{padding:11px 5px 9px 5px;}
-    }
-    .modal-backdrop {
-      position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(26,34,51,0.18); z-index:999;
-      display:flex; align-items:center; justify-content:center;
-    }
-    .modal {
-      background:#fff; border-radius:16px; max-width:95vw; max-height:93vh; overflow-y:auto;
-      box-shadow:0 16px 60px 0 rgba(49,103,230,0.18); padding:27px 18px 17px 18px; position:relative;
-      min-width:260px;
-    }
-    .modal-close {
-      position: absolute; top: 11px; right: 16px;
-      font-size: 1.4rem;
-      color: var(--primary);
-      background: none; border: none; cursor: pointer;
-      font-weight: 800;
-      transition: color .17s;
-    }
-    .modal-close:hover { color: #e53935; }
-    .modal-gallery {
-      display: flex; flex-wrap: wrap; gap: 9px; justify-content: center; margin-bottom: 14px;
-    }
-    .modal-gallery img, .modal-gallery video {
-      border-radius: 7px; max-width: 110px; max-height: 80px; object-fit: cover;
+      width: 100%; height: 66px;
       background: #e3ebff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
     }
-    .modal-title { font-size: 1.1em; font-weight: 800; margin-bottom: 2px; color: var(--primary);}
-    .modal-model { color: var(--primary); font-size: 1em; font-weight: 700; margin-bottom: 5px; }
-    .modal-price { font-size: 1.07em; font-weight: 700; color: #e58f00; margin-bottom: 5px; }
-    .modal-desc { color: #444e62; font-size: 0.99em; margin-bottom: 12px; }
-    .modal-features { margin-bottom: 8px; }
-    .modal-features span { background: #e3ebff; color: var(--primary); font-weight: 500; border-radius: 5px; padding: 1.5px 9px; font-size: 1em; margin-right: 6px; margin-bottom: 4px; display: inline-block;}
-    .modal-action { text-align: right; }
-    .modal-action button { background: var(--primary); color: #fff; border: none; font-size: 1em; font-weight: 700; padding: 8px 19px; border-radius: 7px; cursor: pointer; transition: background .2s, transform .14s; margin:0; }
-    .modal-action button:hover { background: var(--secondary); color: var(--primary);}
+    [data-theme="dark"] .car-img { background: #23243b; }
+    .car-img img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform .7s;
+    }
+    .car-content {
+      padding: 7px 5px 7px 5px;
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .car-title { font-size: 0.98em; font-weight: 700; color: var(--primary); margin: 0 0 2px 0; letter-spacing: .3px;}
+    .car-model { font-size: 0.93em; color: var(--primary-dark); font-weight: 600; margin-bottom: 3px; }
+    .car-desc { color: #444e62; font-size: 0.95em; flex: 1 1 auto; margin-bottom: 3px; opacity: .86; }
+    [data-theme="dark"] .car-desc { color: #b5b8cc; }
+    .car-price { font-size: 0.99em; font-weight: 700; color: #e58f00; margin-bottom: 4px;}
+    .car-features {
+      font-size: 0.9em;
+      color: var(--primary-dark);
+      margin-bottom: 3px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .car-features span {
+      background: #e3ebff;
+      color: var(--primary-dark);
+      font-weight: 500;
+      border-radius: 4px;
+      padding: 0.5px 5px;
+      font-size: 0.9em;
+      margin-top: 1px;
+      display: inline-block;
+      transition: background .13s;
+    }
+    [data-theme="dark"] .car-features span { background: #23243b; color: #6ca0ff; }
+    .car-action {
+      margin-top: 5px;
+      text-align: right;
+    }
+    .car-action button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      font-size: 0.95em;
+      font-weight: 700;
+      padding: 7px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background .16s, transform .11s;
+      box-shadow: 0 2px 6px #3167e611;
+    }
+    .car-action button:hover {
+      background: var(--primary-dark);
+      color: #fff;
+      transform: scale(1.04);
+    }
+
     .footer {
       background: #f1f2f7;
       color: #333;
       text-align: center;
-      padding: 16px 3vw 16px 3vw;
-      font-size: 1.01em;
-      margin-top: 32px;
+      padding: 11px 3vw 11px 3vw;
+      font-size: 1em;
+      margin-top: 14px;
       border-top: 1px solid #e5e8f0;
       width: 100%;
     }
-    .footer a { color: #3c5edb; text-decoration: underline; margin: 0 7px;}
-    .footer .designer { font-weight:700; color: #2345a9;}
+    [data-theme="dark"] .footer { background: #1a1d29; color: #b5b8cc; border-top: 1px solid #23243b;}
+    .footer a { color: var(--primary); text-decoration: underline; margin: 0 7px;}
+    .footer .designer { font-weight:700; color: var(--primary-dark);}
     .footer-links { margin-top:7px; font-size:.99em; }
-    @media (max-width:600px){
-      .footer{padding:8px 1vw;font-size:.98em;}
-    }
+    .modal-backdrop { position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(26,34,51,0.18); z-index:999; display:flex; align-items:center; justify-content:center;}
+    .modal { background: #fff; border-radius: 11px; max-width: 96vw; max-height: 93vh; overflow-y: auto; box-shadow: 0 12px 48px 0 #3167e629; padding: 18px 6px 10px 6px; position: relative; color: var(--text);}
+    [data-theme="dark"] .modal { background: #23243b; color: var(--text);}
+    .modal-close { position: absolute; top: 11px; right: 12px; font-size: 1.3rem; color: var(--primary); background: none; border: none; cursor: pointer; font-weight: 800;}
+    .modal-close:hover { color: #e53935; }
+    .modal-title { font-size: 1em; font-weight:800; margin-bottom:7px; color: var(--primary);}
+    .modal-action { text-align:right; margin-top: 10px;}
+    .modal-action button { background: var(--primary); color:#fff; font-weight:700; padding:7px 17px; border:none; border-radius:7px; cursor:pointer;}
+    .admin-panel {width:100%;max-width:340px;margin:15px auto 0 auto;padding:11px 4px 7px 4px;background:var(--card);border-radius:9px;box-shadow:0 4px 18px #3167e70c;display:none;}
+    .admin-panel.active{display:block;}
+    .admin-title{font-weight:800;font-size:1.05em;margin-bottom:10px;color:var(--primary);}
+    .admin-form label{font-weight:600;display:block;margin-top:8px;}
+    .admin-form input,.admin-form textarea{width:100%;padding:6px 8px;font-size:.97em;border-radius:4px;border:1px solid #c7d1eb;margin-top:2px;background:transparent;color:var(--text);}
+    .admin-form textarea{min-height:38px;}
+    .admin-form .admin-row{margin-bottom:5px;}
+    .admin-form button{background:var(--primary);color:#fff;font-weight:700;padding:7px 14px;border:none;border-radius:6px;cursor:pointer;}
+    .admin-form button:hover{background:var(--primary-dark);}
+    .admin-logout{margin-top:7px;color:#e53935;background:none;border:none;cursor:pointer;font-weight:700;}
+    .admin-list{margin-top:10px;}
+    .admin-car-title{font-weight:700;}
+    .admin-msg{color:#e53935;margin-bottom:7px;font-size:.97em;}
   </style>
   <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
 </head>
 <body>
-  <nav class="appbar">
-    <span class="appbar-title">
+  <header class="header">
+    <div class="nav-left">
       <img src="https://i.ibb.co/4W2DGKm/car-logo.png" class="logo" alt="Chidoxic Logo"/>
-      Chidoxic Auto Mobile Center
-    </span>
-    <span class="appbar-btns">
-      <button onclick="scrollToSection('gallery')">Browse Cars</button>
-      <button onclick="showAbout()">About</button>
-      <button onclick="showContact()">Contact</button>
-      <button class="theme-toggle" id="themeToggle" title="Toggle dark/light mode">🌙</button>
-      <button id="adminBtn" onclick="toggleAdminPanel()">Admin</button>
-    </span>
-  </nav>
+      <span class="site-title">Chidoxic Auto Mobile Center</span>
+    </div>
+    <nav class="nav-btns" id="navBtns">
+      <button class="nav-btn" onclick="scrollToSection('gallery')">Browse Cars</button>
+      <button class="nav-btn" onclick="showAbout()">About</button>
+      <button class="nav-btn" onclick="showContact()">Contact</button>
+      <button class="theme-toggle nav-btn" id="themeToggle" title="Toggle dark/light mode">🌙</button>
+      <button class="nav-btn" id="adminBtn" onclick="toggleAdminPanel()">Admin</button>
+    </nav>
+    <button class="nav-burger" id="burgerBtn" aria-label="Open menu" tabindex="0">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <nav class="nav-mobile-menu" id="navMobileMenu" aria-label="Mobile menu">
+      <button class="nav-mobile-close" id="closeMobileMenu" aria-label="Close menu">&times;</button>
+      <button class="nav-btn" onclick="closeMobileMenu();scrollToSection('gallery')">Browse Cars</button>
+      <button class="nav-btn" onclick="closeMobileMenu();showAbout()">About</button>
+      <button class="nav-btn" onclick="closeMobileMenu();showContact()">Contact</button>
+      <button class="theme-toggle nav-btn" id="themeToggleMobile" title="Toggle dark/light mode">🌙</button>
+      <button class="nav-btn" onclick="closeMobileMenu();toggleAdminPanel()">Admin</button>
+    </nav>
+  </header>
   <main class="main">
     <section class="hero" id="hero">
       <div class="hero-content">
@@ -323,7 +436,7 @@
         </div>
         <div class="admin-row">
           <label for="carMedia">Images & Video (drag and drop or click, min 2 files)</label>
-          <div id="dragDropZone" class="drag-drop-zone" style="background:#f4f7ff;padding:15px;text-align:center;border:2px dashed #3c5edb;border-radius:8px;cursor:pointer;">Drag & drop files here or click to select</div>
+          <div id="dragDropZone" class="drag-drop-zone" style="background:#f4f7ff;padding:11px;text-align:center;border:2px dashed #3c5edb;border-radius:8px;cursor:pointer;">Drag & drop files here or click to select</div>
           <input type="file" id="carMedia" accept="image/*,video/*" multiple style="display:none" />
           <div class="file-list-preview" id="filePreview"></div>
         </div>
@@ -349,7 +462,7 @@
     </div>
   </footer>
   <script>
-    // --- Appwrite Config ---
+    // Appwrite config
     const APPWRITE_ENDPOINT = "https://fra.cloud.appwrite.io/v1";
     const APPWRITE_PROJECT = "684c13530011df315968";
     const APPWRITE_DB_ID = "684c1377001ab5d7cbc9";
@@ -360,7 +473,6 @@
       "supremealpha04@gmail.com",
       "supremealpha04@gmail.com"
     ];
-
     const client = new Appwrite.Client();
     client.setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT);
     const account = new Appwrite.Account(client);
@@ -370,23 +482,47 @@
     let cars = [];
     let isAdmin = false;
 
-    // --- DARK/LIGHT MODE ---
-    function applyTheme(theme) {
+    // Mobile menu logic
+    const burgerBtn = document.getElementById("burgerBtn");
+    const navMobileMenu = document.getElementById("navMobileMenu");
+    const closeMobileMenuBtn = document.getElementById("closeMobileMenu");
+    burgerBtn.onclick = function() {
+      navMobileMenu.style.display = "flex";
+      document.body.style.overflow = "hidden";
+    }
+    function closeMobileMenu() {
+      navMobileMenu.style.display = "none";
+      document.body.style.overflow = "";
+    }
+    closeMobileMenuBtn.onclick = closeMobileMenu;
+
+    // Theme toggle
+    function setTheme(theme) {
       document.documentElement.setAttribute('data-theme', theme);
       localStorage.setItem('theme', theme);
       document.getElementById("themeToggle").innerText = theme === "dark" ? "☀️" : "🌙";
+      document.getElementById("themeToggleMobile").innerText = theme === "dark" ? "☀️" : "🌙";
     }
-    (function(){
-      const saved = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      applyTheme(saved || (prefersDark ? "dark" : "light"));
-    })();
-    document.getElementById("themeToggle").onclick = function() {
-      const current = document.documentElement.getAttribute('data-theme') || 'light';
-      applyTheme(current === "dark" ? "light" : "dark");
-    };
+    function getTheme() {
+      return localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    }
+    function toggleTheme() {
+      setTheme(getTheme() === "dark" ? "light" : "dark");
+    }
+    document.getElementById("themeToggle").onclick = toggleTheme;
+    document.getElementById("themeToggleMobile").onclick = function(){ toggleTheme(); closeMobileMenu(); };
+    setTheme(getTheme());
 
-    // --- Drag & Drop Logic ---
+    document.getElementById('year').innerText = new Date().getFullYear();
+
+    // Scroll to section
+    window.scrollToSection = function(id) {
+      closeMobileMenu();
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    // Appwrite - Drag & Drop
     let selectedFiles = [];
     const dragDropZone = document.getElementById('dragDropZone');
     const fileInput = document.getElementById('carMedia');
@@ -443,7 +579,7 @@
       updatePreview();
     });
 
-    // --- Load Cars from Appwrite ---
+    // Load Cars from Appwrite
     async function loadCars() {
       try {
         const res = await db.listDocuments(
@@ -466,12 +602,10 @@
         console.error("Loading cars error:", e);
       }
     }
-
     function renderCars() {
       const gallery = document.getElementById('gallery');
       gallery.innerHTML = "";
       cars.forEach((car, idx) => {
-        const delay = 0.08 * idx;
         let cover = "";
         if (car.media && Array.isArray(car.media) && car.media.length) {
           const first = car.media.find(m => m.type === "image") || car.media[0];
@@ -480,13 +614,12 @@
         const features = car.features ? (Array.isArray(car.features) ? car.features : car.features.split(',')) : [];
         const card = document.createElement('div');
         card.className = "car-card";
-        card.style.animationDelay = delay + 's';
         card.innerHTML = `
           <div class="car-img">${cover ? `<img src="${cover}" alt="${car.title}">` : ""}</div>
           <div class="car-content">
             <div class="car-title">${car.title}</div>
             <div class="car-model">${car.model}</div>
-            <div class="car-desc">${car.description.slice(0, 84)}...</div>
+            <div class="car-desc">${car.description.slice(0, 60)}...</div>
             <div class="car-features">${features.map(f => `<span>${f.trim()}</span>`).join('')}</div>
             <div class="car-price">${car.price}</div>
             <div class="car-action">
@@ -497,7 +630,6 @@
         gallery.appendChild(card);
       });
     }
-
     window.showCarModal = function(id) {
       const car = cars.find(c => c.$id === id);
       if (!car) return;
@@ -506,9 +638,9 @@
       if (car.media && Array.isArray(car.media)) {
         gallery = `<div class="modal-gallery">` + car.media.map(media => {
           if (media.type === "image") {
-            return `<img src="${media.url}" alt="car image" loading="lazy">`;
+            return `<img src="${media.url}" alt="car image" loading="lazy" style="max-width:90px;max-height:60px;margin:2px;border-radius:7px;">`;
           } else if (media.type === "video") {
-            return `<video src="${media.url}" controls style="background:#222"></video>`;
+            return `<video src="${media.url}" controls style="background:#222;max-width:90px;max-height:60px;margin:2px;border-radius:7px;"></video>`;
           }
           return "";
         }).join('') + `</div>`;
@@ -537,20 +669,85 @@
       document.body.style.overflow = "";
     }
 
-    window.scrollToSection = function(id) {
-      const el = document.getElementById(id);
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    function showAbout() {
+      closeMobileMenu();
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="closeModal(event)">
+          <div class="modal" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event)">&times;</button>
+            <div class="modal-title">About Chidoxic Auto Mobile Center</div>
+            <div class="modal-desc" style="margin-bottom:12px;">
+              <b>Chidoxic Auto Mobile Center</b> is a modern, animated, and responsive car dealership showcase. Browse a handpicked selection of the world's best cars, each presented with smooth UI transitions and info straight from the cloud database.
+              <ul style="padding-left:20px; margin:0;">
+                <li>Modern, clean design with smooth animations and transitions</li>
+                <li>Detailed car info including price, model, features, and high-res images</li>
+                <li>Powered by Appwrite backend</li>
+                <li>Responsive and works on all devices</li>
+              </ul>
+            </div>
+            <div class="modal-action"><button onclick="closeModal(event)">Close</button></div>
+          </div>
+        </div>
+      `;
+      document.body.style.overflow = "hidden";
+    }
+    function showContact() {
+      closeMobileMenu();
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="closeModal(event)">
+          <div class="modal" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event)">&times;</button>
+            <div class="modal-title">Contact Us</div>
+            <div class="modal-desc" style="margin-bottom:11px;">
+              <b>Looking for a car or need more details?</b> <br>
+              Email: <a href="mailto:info@chidoxicauto.com" style="color:#3167e6;">info@chidoxicauto.com</a><br>
+              Phone: <a href="tel:+2348134567890" style="color:#3167e6;">+234 813 456 7890</a><br>
+              Location: 123 Dream Cars Blvd, Auto City, Nigeria
+            </div>
+            <div class="modal-action"><button onclick="closeModal(event)">Close</button></div>
+          </div>
+        </div>
+      `;
+      document.body.style.overflow = "hidden";
+    }
+    function showTerms(e) {
+      if(e) e.preventDefault();
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="closeModal(event)">
+          <div class="modal" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event)">&times;</button>
+            <div class="modal-title">Terms & Conditions</div>
+            <div class="modal-desc" style="margin-bottom:12px;">
+              By using this website, you agree to our terms: All car listings are for showcase purposes only.
+              No purchase or transaction is guaranteed through this site. Contact us directly for all business dealings.
+              We reserve the right to update these terms at any time.
+            </div>
+            <div class="modal-action"><button onclick="closeModal(event)">Close</button></div>
+          </div>
+        </div>
+      `;
+      document.body.style.overflow = "hidden";
+    }
+    function showPrivacy(e) {
+      if(e) e.preventDefault();
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="closeModal(event)">
+          <div class="modal" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event)">&times;</button>
+            <div class="modal-title">Privacy Policy</div>
+            <div class="modal-desc" style="margin-bottom:12px;">
+              We respect your privacy. No personal information is collected unless you contact us directly.
+              Cookies may be used for analytics and site improvement.
+              Your data is never sold or shared with third parties.
+            </div>
+            <div class="modal-action"><button onclick="closeModal(event)">Close</button></div>
+          </div>
+        </div>
+      `;
+      document.body.style.overflow = "hidden";
     }
 
-    // Admin logic (unchanged, keep as in your code)
-    // ... (Rest of your modal/about/contact/footer JS, unchanged) ...
-
-    // Footer year
-    document.getElementById('year').innerText = new Date().getFullYear();
-
-    // (Your modal-related functions: showTerms, showPrivacy, showAbout, showContact, etc. unchanged)
-
-    // Admin Panel logic
+    // Admin logic
     window.toggleAdminPanel = function() {
       if (isAdmin) {
         document.getElementById('adminPanel').classList.toggle('active');
@@ -564,13 +761,13 @@
           <div class="modal" onclick="event.stopPropagation()">
             <button class="modal-close" onclick="closeModal(event)">&times;</button>
             <div class="modal-title">Admin Login</div>
-            <form id="adminLoginForm" style="margin-top:17px;">
+            <form id="adminLoginForm" style="margin-top:11px;">
               <label>Email</label>
-              <input type="email" id="adminEmail" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #c7d1eb;">
-              <label style="margin-top:8px;">Password</label>
-              <input type="password" id="adminPassword" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #c7d1eb;">
-              <button style="margin-top:14px;width:100%;background:#3c5edb;color:#fff;padding:10px;border:none;border-radius:6px;font-weight:700;cursor:pointer;">Login</button>
-              <div id="loginMsg" style="color:#e53935;margin-top:8px;"></div>
+              <input type="email" id="adminEmail" required style="width:100%;padding:7px;border-radius:5px;border:1px solid #c7d1eb;">
+              <label style="margin-top:6px;">Password</label>
+              <input type="password" id="adminPassword" required style="width:100%;padding:7px;border-radius:5px;border:1px solid #c7d1eb;">
+              <button style="margin-top:10px;width:100%;background:#3167e6;color:#fff;padding:8px;border:none;border-radius:5px;font-weight:700;cursor:pointer;">Login</button>
+              <div id="loginMsg" style="color:#e53935;margin-top:7px;"></div>
             </form>
           </div>
         </div>
@@ -600,7 +797,6 @@
       document.getElementById('adminPanel').classList.remove('active');
     }
 
-    // --- Admin Add Car Logic with sold ---
     document.getElementById('adminForm').onsubmit = async function(e) {
       e.preventDefault();
       const title = document.getElementById('carTitle').value.trim();
@@ -649,116 +845,14 @@
         console.error(err);
       }
     }
-
     function renderAdminCarList() {
       if (!isAdmin) return;
-      let html = "<div style='margin-bottom:10px;font-weight:700;'>All Cars</div>";
+      let html = "<div style='margin-bottom:7px;font-weight:700;'>All Cars</div>";
       if (!cars.length) html += "<div>No cars found.</div>";
       else cars.forEach(car => {
-        html += `<div class="admin-car-title">${car.title} (${car.model}) - <span style="color:#3c5edb;">${car.price}</span></div>`;
+        html += `<div class="admin-car-title">${car.title} (${car.model}) - <span style="color:#3167e6;">${car.price}</span></div>`;
       });
       document.getElementById('adminList').innerHTML = html;
-    }
-
-    // Footer year
-    document.getElementById('year').innerText = new Date().getFullYear();
-
-    function showTerms(e) {
-      if(e) e.preventDefault();
-      document.getElementById('modal-root').innerHTML = `
-        <div class="modal-backdrop" onclick="closeModal(event)">
-          <div class="modal" onclick="event.stopPropagation()">
-            <button class="modal-close" onclick="closeModal(event)">&times;</button>
-            <div class="modal-title">Terms & Conditions</div>
-            <div class="modal-desc" style="margin-bottom:18px;max-width:480px;">
-              By using this website, you agree to our terms: All car listings are for showcase purposes only.
-              No purchase or transaction is guaranteed through this site. Contact us directly for all business dealings.
-              We reserve the right to update these terms at any time.
-            </div>
-            <div class="modal-action"><button onclick="closeModal(event)">Close</button></div>
-          </div>
-        </div>
-      `;
-      document.body.style.overflow = "hidden";
-    }
-    function showPrivacy(e) {
-      if(e) e.preventDefault();
-      document.getElementById('modal-root').innerHTML = `
-        <div class="modal-backdrop" onclick="closeModal(event)">
-          <div class="modal" onclick="event.stopPropagation()">
-            <button class="modal-close" onclick="closeModal(event)">&times;</button>
-            <div class="modal-title">Privacy Policy</div>
-            <div class="modal-desc" style="margin-bottom:18px;max-width:480px;">
-              We respect your privacy. No personal information is collected unless you contact us directly.
-              Cookies may be used for analytics and site improvement.
-              Your data is never sold or shared with third parties.
-            </div>
-            <div class="modal-action"><button onclick="closeModal(event)">Close</button></div>
-          </div>
-        </div>
-      `;
-      document.body.style.overflow = "hidden";
-    }
-    function showAbout() {
-      document.getElementById('modal-root').innerHTML = `
-        <div class="modal-backdrop" onclick="closeModal(event)">
-          <div class="modal" onclick="event.stopPropagation()">
-            <button class="modal-close" onclick="closeModal(event)">&times;</button>
-            <img src="https://i.ibb.co/vHgwkF7/supremeamer-ceo.jpg" alt="Supremeamer CEO" style="width:76px;height:76px;border-radius:50%;object-fit:cover;margin-bottom:10px;border:2.5px solid #3c5edb;box-shadow:0 2px 8px #3c5edb22;display:block;margin-left:auto;margin-right:auto;" />
-            <div class="modal-title" style="margin-bottom:7px;">About Chidoxic Auto Mobile Center</div>
-            <div class="modal-desc" style="margin-bottom:7px;">
-              <b>Chidoxic Auto Mobile Center</b> is run by <b>Supremeamer (Amadi Chidox)</b>, a passionate entrepreneur and auto expert.<br>
-              We provide a modern, responsive and animated online experience for car lovers.
-            </div>
-            <div style="margin:17px 0 12px 0;text-align:left;font-size:1em;color:#214fa4;background:#e3ebff;border-radius:8px;padding:9px 13px;">
-              <b>Our Services:</b>
-              <ul style="margin:0 0 0 17px;">
-                <li>Car Sales (New & Used)</li>
-                <li>Auto Consultancy</li>
-                <li>Car Upgrades & Customization</li>
-                <li>Car Sourcing/Importation</li>
-                <li>General Auto Maintenance</li>
-              </ul>
-            </div>
-            <div style="font-size:1em;margin-bottom:11px;">
-              <b>Why Chidoxic?</b> <br>
-              Our gallery showcases only the best, and every vehicle is verified for quality!
-            </div>
-            <div style="margin-top:16px;padding-top:13px;border-top:1.5px solid #e3ebff;font-size:1em;text-align:center;">
-              <div>
-                <b>Contact:</b> supremeamerapplications@gmail.com <br>
-                <b>Phone:</b> +234 813 456 7890
-              </div>
-              <div style="display:flex;justify-content:center;gap:8px;margin-top:8px;">
-                <a href="https://wa.me/2348134567890" target="_blank" title="WhatsApp"><span>🟢</span></a>
-                <a href="https://instagram.com/supremeamer" target="_blank" title="Instagram"><span>📷</span></a>
-                <a href="https://facebook.com/chidoxicsupremeamer" target="_blank" title="Facebook"><span>📘</span></a>
-                <a href="https://twitter.com/supremeamer" target="_blank" title="Twitter"><span>🐦</span></a>
-              </div>
-            </div>
-            <div class="modal-action"><button onclick="closeModal(event)">Close</button></div>
-          </div>
-        </div>
-      `;
-      document.body.style.overflow = "hidden";
-    }
-    function showContact() {
-      document.getElementById('modal-root').innerHTML = `
-        <div class="modal-backdrop" onclick="closeModal(event)">
-          <div class="modal" onclick="event.stopPropagation()">
-            <button class="modal-close" onclick="closeModal(event)">&times;</button>
-            <div class="modal-title">Contact Us</div>
-            <div class="modal-desc" style="margin-bottom:16px;">
-              <b>Looking for a car or need more details?</b> <br>
-              Email: <a href="mailto:info@chidoxicauto.com" style="color:#3c5edb;">info@chidoxicauto.com</a><br>
-              Phone: <a href="tel:+2348134567890" style="color:#3c5edb;">+234 813 456 7890</a><br>
-              Location: 123 Dream Cars Blvd, Auto City, Nigeria
-            </div>
-            <div class="modal-action"><button onclick="closeModal(event)">Close</button></div>
-          </div>
-        </div>
-      `;
-      document.body.style.overflow = "hidden";
     }
 
     (async function(){
